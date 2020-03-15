@@ -1,0 +1,224 @@
+set nocompatible
+filetype off
+
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+
+Plugin 'VundleVim/Vundle.vim'
+Plugin 'airblade/vim-gitgutter'
+Plugin 'tomtom/tcomment_vim'
+Plugin 'tpope/vim-surround'
+Plugin 'ycm-core/YouCompleteMe'
+Plugin 'ap/vim-buftabline'
+Plugin 'morhetz/gruvbox'
+
+call vundle#end()
+
+" Settings
+set clipboard=unnamedplus
+set incsearch
+set cursorline
+set number
+set relativenumber
+set ruler
+set ignorecase
+set hidden
+set splitright
+set splitbelow
+set nobackup
+set nowritebackup
+set noswapfile
+set autoindent
+set backspace=indent,eol,start
+set complete-=i
+set showmatch
+set showmode
+set encoding=utf-8
+set listchars=tab:‣\ ,trail:·,space:·,precedes:⇤,extends:⇥
+set nowrap
+set colorcolumn=80
+set laststatus=2
+set hlsearch
+set timeoutlen=1000
+set ttimeoutlen=0
+set switchbuf+=usetab,newtab
+
+" Tab/Space settings
+set tabstop=4
+set shiftwidth=4
+set softtabstop=4
+set noexpandtab
+
+" Status
+set statusline=
+set statusline+=\ %f\ 
+set statusline+=%#%{ShowCurrentStatusLine()}#
+set statusline+=\ %m\ 
+set statusline+=%w
+set statusline+=%=
+set statusline+=%{ShowFileFormatFlag(&fileformat)}
+set statusline+=%#%{ShowCurrentStatusLine()}#
+set statusline+=\ 
+set statusline+=\ C:
+set statusline+=\ %c\ 
+set statusline+=%#%{ShowCurrentStatusLine()}#
+set statusline+=\ 
+set statusline+=\ L:
+set statusline+=\ %l
+set statusline+=/
+set statusline+=%L\ 
+set statusline+=%#%{ShowCurrentStatusLine()}#
+
+" Colorscheme
+colorscheme gruvbox
+set background=dark
+set termguicolors
+let g:gruvbox_contrast_dark = "hard"
+let g:gruvbox_contrast_light = "hard"
+let g:gruvbox_invert_selection = "0"
+let g:gruvbox_improved_warnings = "1"
+
+" Colors
+autocmd ColorScheme * hi SpellBad     ctermbg=darkred     ctermfg=black
+autocmd ColorScheme * hi SpellRare    ctermbg=darkblue    ctermfg=black
+autocmd ColorScheme * hi SpellCap     ctermbg=darkyellow  ctermfg=black
+autocmd ColorScheme * hi SpellLocal   ctermbg=darkblue    ctermfg=black
+autocmd ColorScheme * hi SpellLocal   ctermbg=darkblue    ctermfg=black
+
+" Window sperator
+set fillchars=vert:│
+
+set completeopt=longest,menuone
+let &t_SI = "\<Esc>[6 q"
+let &t_SR = "\<Esc>[4 q"
+let &t_EI = "\<Esc>[2 q"
+au VimEnter * silent execute '!echo -ne "\e[1 q"' | redraw!
+
+if has('autocmd')
+  filetype plugin indent on
+endif
+
+" Switch on syntax highlighting if available
+if has('syntax') && !exists('g:syntax_on')
+  syntax enable
+endif
+
+" Wrap left and right
+set whichwrap+=<,>,h,l,[,]
+
+""""""""""""""""""
+" Plugin Install "
+""""""""""""""""""
+
+" YouCompleteMe
+let g:ycm_max_num_candidates = 10
+let g:ycm_error_symbol = '✘'
+let g:ycm_warning_symbol = 'ǃ'
+let g:ycm_disable_signature_help = 0
+let g:ycm_global_ycm_extra_conf = '~/.vim/bundle/YouCompleteMe/.ycm_extra_conf.py'
+hi YcmErrorSection   ctermfg=darkred    ctermbg=black cterm=underline,italic,bold
+hi YcmWarningSection ctermfg=darkyellow ctermbg=black cterm=underline,italic
+
+"""""""""""""""
+" Key Mapping "
+"""""""""""""""
+" Clear search
+nnoremap <F7> :noh<CR>
+
+" Undo, Redo
+nnoremap u :undo<CR>
+nnoremap U :redo<CR>
+
+" Yanking
+nnoremap Y y$
+
+" Delete line
+nnoremap m "_d
+vnoremap m "_d
+
+nnoremap mm "_dd
+vnoremap MM "_dd
+
+nnoremap M "_D
+nnoremap M "_D
+
+nnoremap c "_c
+
+nnoremap x "_x
+vnoremap x "_x
+
+" Suspend
+nmap <c-z> :sus<CR>
+
+" Create tab, split vertically, split horizontal, close
+source ~/.vim/custom.vim
+nmap qt :tabnew<Space>
+nmap qy :vnew<Space>
+nmap qx :new<Space>
+nmap qo :edit<Space>
+nmap qd :bwipeout<CR>
+nmap qD :call DeleteHiddenBuffers()<CR>
+nmap qn :call MoveToNextTab()<CR>
+nmap qp :call MoveToPrevTab()<CR>
+
+nnoremap q1 :1tabnext<CR>
+nnoremap q2 :2tabnext<CR>
+nnoremap q3 :3tabnext<CR>
+nnoremap q4 :4tabnext<CR>
+nnoremap q5 :5tabnext<CR>
+nnoremap q6 :6tabnext<CR>
+nnoremap q7 :7tabnext<CR>
+nnoremap q8 :8tabnext<CR>
+nnoremap q9 :9tabnext<CR>
+
+nmap qh <C-W>H
+nmap qj <C-W>J
+nmap qk <C-W>K
+nmap ql <C-W>L
+
+nmap K :wincmd k<CR>
+nmap J :wincmd j<CR>
+nmap H :wincmd h<CR>
+nmap L :wincmd l<CR>
+
+nmap qH :vertical resize -10<CR>
+nmap qJ :resize +5<CR>
+nmap qK :resize -5<CR>
+nmap qL :vertical resize +10<CR>
+
+" Show hex dump
+nmap sd :%!xxd<CR>
+nmap sD :%!xxd -r<CR>
+
+" Show hidden character
+nmap sh :set list! list?<CR>
+
+" Ctags
+set tags=./tags;$HOME
+nmap ;s :tselect<Space>
+nmap ;n :tnext<CR>:.-bwipeout<CR>
+nmap ;N :tprev<CR>:.-bwipeout<CR>
+nmap ;i :exec("tselect ".expand("<cword>"))<CR>
+nmap ;I :tselect<Space>
+nmap ;t :tab split<CR>:exec("tselect ".expand("<cword>"))<CR>
+nmap ;T :tab split<CR>:tselect<Space>
+nmap ;y :vsp <CR>:exec("tselect ".expand("<cword>"))<CR>
+nmap ;Y :vsp <CR>:tselect<Space>
+nmap ;x :sp <CR>:exec("tselect ".expand("<cword>"))<CR>
+nmap ;X :sp <CR>:tselect<Space>
+
+" Makefile
+nnoremap zm :make!<CR><CR>
+nnoremap zn :cn<CR>
+nnoremap zN :cp<CR>
+nnoremap zq :cclose<CR>
+
+" Spellchecking
+nmap <F5> :setlocal spell! spelllang=en_us<CR>
+nmap <F6> :setlocal spell! spelllang=de_de<CR>
+
+" Autocmds
+au BufRead /tmp/mutt-* set tw=72
+au FileType gitcommit set tw=72
+au FileType python set expandtab
+au QuickFixCmdPost [^l]* copen 21
