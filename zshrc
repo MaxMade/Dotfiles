@@ -9,23 +9,19 @@ export KEYTIMEOUT=1
 # History file
 HISTFILE=~/.zsh_history
 setopt hist_ignore_all_dups
-HISTSIZE=1000
-SAVEHIST=1000
+HISTSIZE=5000
+SAVEHIST=5000
 
 # Alias
-alias grep="grep --colour=auto"
-alias egrep="egrep --colour=auto"
 alias ls="ls --color=auto --human-readable"
 alias sl="ls --color=auto --human-readable"
-alias l="ls --color=auto --human-readable"
-alias ll="ls --color=auto --human-readable -la"
 alias la="ls --color=auto --human-readable -la"
-alias sudo="nocorrect sudo"
 alias xclip="xclip -selection clipboard"
-alias vi="vim"
 alias ..="cd .."
 alias .="termite . &"
-alias less="less -R"
+alias less="less -r"
+alias grep="grep --colour=always"
+alias open="mimeopen"
 
 # Tab completion
 autoload -Uz compinit
@@ -40,6 +36,12 @@ bindkey -M menuselect 'j' vi-down-line-or-history
 
 # Set default editor
 export EDITOR=vim
+
+# fzf
+PATH_FZF="/usr/share/fzf/"
+if [[ -f $PATH_FZF/key-bindings.zsh ]]; then
+	source $PATH_FZF/key-bindings.zsh
+fi
 
 # Syntax highlighting
 PATH_SYNTAX="/usr/share/zsh/plugins/zsh-syntax-highlighting/"
@@ -100,6 +102,10 @@ git() {
 	else
 		command git "$@"
 	fi
+}
+
+khal() {
+	command rlwrap khal "$@"
 }
 
 # Prompt
@@ -166,3 +172,7 @@ export LC_CTYPE=en_US.UTF-8
 # Exports
 export TERM=xterm-256color
 export PATH="${PATH}:$HOME/.bin"
+export FZF_DEFAULT_OPTS="--layout=reverse"
+export FZF_CTRL_T_COMMAND="fd --hidden --exclude .git --exclude .cache"
+export FZF_ALT_C_COMMAND="fd --hidden --type d --exclude .git --exclude .cache"
+export FZF_DEFAULT_COMMAND="fd --type f --type l --hidden --exclude .git  --exclude .cache"
