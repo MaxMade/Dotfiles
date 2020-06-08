@@ -63,3 +63,24 @@ function MoveToNextTab()
 	"opening current buffer in new window
 	exe "b".l:cur_buf
 endfunc
+
+function YcmToggleUI()
+	if g:ycm_show_diagnostics_ui
+		let g:ycm_show_diagnostics_ui = 0
+	else
+		let g:ycm_show_diagnostics_ui = 1
+	endif
+
+	silent execute 'YcmRestartServer'
+	silent execute 'e'
+endfunc
+
+function TagUnderCursor()
+	let wordUnderCursor = expand("<cword>")
+	silent execute 'Tags' wordUnderCursor
+endfunction
+
+function AgUnderCursor()
+	let wordUnderCursor = expand("<cword>")
+	silent execute 'Ag' wordUnderCursor
+endfunction

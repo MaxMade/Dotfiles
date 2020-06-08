@@ -11,6 +11,8 @@ Plugin 'tpope/vim-surround'
 Plugin 'ycm-core/YouCompleteMe'
 Plugin 'ap/vim-buftabline'
 Plugin 'morhetz/gruvbox'
+Plugin 'SirVer/ultisnips'
+Plugin 'honza/vim-snippets'
 
 call vundle#end()
 
@@ -34,7 +36,7 @@ set complete-=i
 set showmatch
 set showmode
 set encoding=utf-8
-set listchars=tab:‣\ ,trail:·,space:·,precedes:⇤,extends:⇥
+set listchars=tab:‣\ ,trail:␣,space:␣,precedes:⇤,extends:⇥
 set nowrap
 set colorcolumn=80
 set laststatus=2
@@ -79,11 +81,15 @@ let g:gruvbox_invert_selection = "0"
 let g:gruvbox_improved_warnings = "1"
 
 " Colors
+let c_space_errors = 1
+let java_space_errors = 1
+let python_space_errors = 1
 autocmd ColorScheme * hi SpellBad     ctermbg=darkred     ctermfg=black
 autocmd ColorScheme * hi SpellRare    ctermbg=darkblue    ctermfg=black
 autocmd ColorScheme * hi SpellCap     ctermbg=darkyellow  ctermfg=black
 autocmd ColorScheme * hi SpellLocal   ctermbg=darkblue    ctermfg=black
 autocmd ColorScheme * hi SpellLocal   ctermbg=darkblue    ctermfg=black
+autocmd ColorScheme * hi cSpaceError  ctermfg=darkred     cterm=strikethrough
 
 " Window sperator
 set fillchars=vert:│
@@ -118,6 +124,11 @@ let g:ycm_disable_signature_help = 0
 let g:ycm_global_ycm_extra_conf = '~/.vim/bundle/YouCompleteMe/.ycm_extra_conf.py'
 hi YcmErrorSection   ctermfg=darkred    ctermbg=black cterm=underline,italic,bold
 hi YcmWarningSection ctermfg=darkyellow ctermbg=black cterm=underline,italic
+
+" UltiSnips
+let g:UltiSnipsExpandTrigger="<c-j>"
+let g:UltiSnipsJumpForwardTrigger="<c-j>"
+let g:UltiSnipsJumpBackwardTrigger="<c-k>"
 
 """""""""""""""
 " Key Mapping "
@@ -195,17 +206,17 @@ nmap sh :set list! list?<CR>
 
 " Ctags
 set tags=./tags;$HOME
-nmap ;s :tselect<Space>
-nmap ;n :tnext<CR>:.-bwipeout<CR>
-nmap ;N :tprev<CR>:.-bwipeout<CR>
-nmap ;i :exec("tselect ".expand("<cword>"))<CR>
-nmap ;I :tselect<Space>
-nmap ;t :tab split<CR>:exec("tselect ".expand("<cword>"))<CR>
-nmap ;T :tab split<CR>:tselect<Space>
-nmap ;y :vsp <CR>:exec("tselect ".expand("<cword>"))<CR>
-nmap ;Y :vsp <CR>:tselect<Space>
-nmap ;x :sp <CR>:exec("tselect ".expand("<cword>"))<CR>
-nmap ;X :sp <CR>:tselect<Space>
+nmap <Space>s :tselect<Space>
+nmap <Space>n :tnext<CR>:.-bwipeout<CR>
+nmap <Space>N :tprev<CR>:.-bwipeout<CR>
+nmap <Space>i :exec("tselect ".expand("<cword>"))<CR>
+nmap <Space>I :tselect<Space>
+nmap <Space>t :tab split<CR>:exec("tselect ".expand("<cword>"))<CR>
+nmap <Space>T :tab split<CR>:tselect<Space>
+nmap <Space>y :vsp <CR>:exec("tselect ".expand("<cword>"))<CR>
+nmap <Space>Y :vsp <CR>:tselect<Space>
+nmap <Space>x :sp <CR>:exec("tselect ".expand("<cword>"))<CR>
+nmap <Space>X :sp <CR>:tselect<Space>
 
 " Makefile
 nnoremap zm :make!<CR><CR>
