@@ -392,3 +392,58 @@ next multiple of 8."""
 
 HexDump()
 end
+
+# ------------------------------------------------------------------------------
+
+python
+import sys
+import re
+from pyfzf.pyfzf import FzfPrompt
+class fzfHistory(gdb.Command):
+    """Search history using fzf.
+Use fzf (command-line fuzzy finder) command to search history.
+"""
+
+    def __init__(self):
+        super(fzfHistory, self).__init__("history", gdb.COMMAND_USER)
+
+    def invoke (self, args, from_tty):
+        argv = gdb.string_to_argv(args)
+
+        # Check length of arguments
+        if len(argv) != 0:
+            raise gdb.GdbError("Usage: history")
+
+        # Recieve command history
+        tmp = ""
+        _tmp = ""
+        entries = []
+        tmp = gdb.execute("show commands 0", True, True);
+        entries.extend(tmp.splitlines())
+        while True:
+            _tmp = str(tmp)
+            tmp = gdb.execute("show commands +", True, True);
+            entries.extend(tmp.splitlines())
+            if _tmp == tmp:
+                break;
+
+        # Revise list
+        entries = [re.sub("^\s*\d*\s*", "", x, 1) for x in entries]
+
+        # Select entry
+        fzf = FzfPrompt()
+        cmd = ""
+        try:
+            cmd = fzf.prompt(entries, '--cycle --height=20')
+        except Exception as e:
+            return
+
+        # Run Command
+        try:
+            cmd = str(cmd[0])
+            gdb.execute(str(cmd))
+        except gdb.error as e:
+            print(e)
+
+fzfHistory()
+end
