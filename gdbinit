@@ -200,6 +200,41 @@ Start dasboard frontend.
 Usage: frontend
 end
 
+# ------------------------------------------------------------------------------
+
+define gva2gpa
+    if $argc == 1
+        eval "monitor gva2gpa %p" $arg0
+    end
+    if $argc != 1
+        help gva2gpa
+    end
+end
+document gva2gpa
+Get physical address for given virtual address (QEMU only).
+Usage: gva2gpa addr
+end
+
+# ------------------------------------------------------------------------------
+
+define xp
+    if $argc == 0
+        help xp
+    end
+
+    if $argc == 1
+        eval "monitor xp %p", $arg0
+    end
+
+    if $argc == 2
+        eval "monitor xp $arg0 %p", $arg1
+    end
+end
+document xp
+Examine memory of associated physical address (QEMU only).
+Usage: xp /fmt addr
+end
+
 ###########################
 # Custom Python Functions #
 ###########################
@@ -223,6 +258,8 @@ class CustomCommands(gdb.Command):
         print("dis       - Disassemble memory section")
         print("reg       - Print registers")
         print("octodebug - Setup for InvasIC")
+        print("gva2gpa   - Print physical address for given virual address (QEMU only)")
+        print("xp        - Examine physical memory")
         print("fronted   - Start Dashboard frontend")
         print("split     - Create split for Dashboard")
         print("height    - Set height of split in Dashboard")
