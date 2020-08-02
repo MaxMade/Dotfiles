@@ -13,6 +13,9 @@ Plugin 'ap/vim-buftabline'
 Plugin 'morhetz/gruvbox'
 Plugin 'SirVer/ultisnips'
 Plugin 'honza/vim-snippets'
+Plugin 'godlygeek/tabular'
+Plugin 'plasticboy/vim-markdown'
+Plugin 'junegunn/fzf.vim'
 
 call vundle#end()
 
@@ -124,11 +127,15 @@ let g:ycm_disable_signature_help = 0
 let g:ycm_global_ycm_extra_conf = '~/.vim/bundle/YouCompleteMe/.ycm_extra_conf.py'
 hi YcmErrorSection   ctermfg=darkred    ctermbg=black cterm=underline,italic,bold
 hi YcmWarningSection ctermfg=darkyellow ctermbg=black cterm=underline,italic
+nmap <F8> :call YcmToggleUI()<CR>
 
 " UltiSnips
 let g:UltiSnipsExpandTrigger="<c-j>"
 let g:UltiSnipsJumpForwardTrigger="<c-j>"
 let g:UltiSnipsJumpBackwardTrigger="<c-k>"
+
+" Tabular
+vmap \| :Tabularize /
 
 """""""""""""""
 " Key Mapping "
@@ -154,6 +161,7 @@ nnoremap M "_D
 nnoremap M "_D
 
 nnoremap c "_c
+nnoremap C "_C
 
 nnoremap x "_x
 vnoremap x "_x
@@ -163,14 +171,14 @@ nmap <c-z> :sus<CR>
 
 " Create tab, split vertically, split horizontal, close
 source ~/.vim/custom.vim
-nmap qt :tabnew<Space>
-nmap qy :vnew<Space>
-nmap qx :new<Space>
-nmap qo :edit<Space>
+nmap qo :Files<CR>
 nmap qd :bwipeout<CR>
 nmap qD :call DeleteHiddenBuffers()<CR>
 nmap qn :call MoveToNextTab()<CR>
 nmap qp :call MoveToPrevTab()<CR>
+
+nmap <c-n> :tabnext<CR>
+nmap <c-p> :tabprev<CR>
 
 nnoremap q1 :1tabnext<CR>
 nnoremap q2 :2tabnext<CR>
@@ -206,22 +214,13 @@ nmap sh :set list! list?<CR>
 
 " Ctags
 set tags=./tags;$HOME
-nmap <Space>s :tselect<Space>
-nmap <Space>n :tnext<CR>:.-bwipeout<CR>
-nmap <Space>N :tprev<CR>:.-bwipeout<CR>
-nmap <Space>i :exec("tselect ".expand("<cword>"))<CR>
-nmap <Space>I :tselect<Space>
-nmap <Space>t :tab split<CR>:exec("tselect ".expand("<cword>"))<CR>
-nmap <Space>T :tab split<CR>:tselect<Space>
-nmap <Space>y :vsp <CR>:exec("tselect ".expand("<cword>"))<CR>
-nmap <Space>Y :vsp <CR>:tselect<Space>
-nmap <Space>x :sp <CR>:exec("tselect ".expand("<cword>"))<CR>
-nmap <Space>X :sp <CR>:tselect<Space>
+nmap <Space>t :call TagUnderCursor()<CR>
+nmap <Space>T :Tags<CR>
+nmap <Space>r :call AgUnderCursor()<CR>
+nmap <Space>R :Ag<CR>
 
 " Makefile
-nnoremap zm :make!<CR><CR>
-nnoremap zn :cn<CR>
-nnoremap zN :cp<CR>
+nnoremap z<Space> :make!<Space>
 nnoremap zq :cclose<CR>
 
 " Spellchecking
@@ -232,4 +231,6 @@ nmap <F6> :setlocal spell! spelllang=de_de<CR>
 au BufRead /tmp/mutt-* set tw=72
 au FileType gitcommit set tw=72
 au FileType python set expandtab
-au QuickFixCmdPost [^l]* copen 21
+au FileType tex set expandtab
+au FileType java set expandtab ts=2 sw=2 sts=2
+au QuickFixCmdPost [^l]* tab cw 20
