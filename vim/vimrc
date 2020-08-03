@@ -169,6 +169,10 @@ vnoremap x "_x
 " Suspend
 nmap <c-z> :sus<CR>
 
+" Command history
+cmap <c-k> <UP>
+cmap <c-j> <DOWN>
+
 " Create tab, split vertically, split horizontal, close
 source ~/.vim/custom.vim
 nmap qo :Files<CR>
