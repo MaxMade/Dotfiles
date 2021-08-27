@@ -1,0 +1,64 @@
+# Don't display uncommitted changes
+set show-changes = no
+
+# Ignore case when searching
+set ignore-case = yes
+
+# Unbind unused view
+bind generic t none
+bind generic f none
+bind generic b none
+bind generic r none
+bind generic s none
+bind generic c none
+bind generic y none
+bind generic p none
+bind generic g none
+
+# Move between windows
+bind generic J next
+bind generic K previous
+bind main <Ctrl-f> scroll-page-down
+bind main <Ctrl-b> scroll-page-up
+
+# Modify UI
+set main-view-date = custom
+set main-view-date-format = "%d.%m.%y %H:%M"
+set main-view = date:relative author:full id:yes commit-title:yes,graph,refs
+
+# Colors
+color delimiter default default
+
+color cursor         black  green
+color search-result  black  red
+color graph-commit   green  default
+color date           yellow default
+color author         cyan   default
+color title-focus    white  color8
+
+color main-head      red     default bold
+color main-ref       green   default
+color main-remote    yellow  default
+color main-tag       yellow  default bold
+color main-local-tag yellow  default bold
+
+# Information at the top of the commit diff
+color commit                default default
+color "    Signed-off-by"   magenta default
+color "    Acked-by"        magenta default
+color "    Tested-by"       magenta default
+color "    Reviewed-by"     magenta default
+
+color "Author: "            cyan default
+color "Commit: "            cyan default
+color "Date: "              cyan default
+color "AuthorDate: "        cyan default
+color "CommitDate: "        cyan default
+
+color pp-merge              default default
+color pp-refs               default default
+
+# Diff coloring.
+color diff-header default default bold # diff --git a/.. b/..
+color diff-index  default default bold # index abc..def
+color diff-chunk  yellow    default      # @@ -.. +.. @@
