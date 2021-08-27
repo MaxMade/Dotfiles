@@ -1,0 +1,19 @@
+set editing-mode vi
+
+set keymap vi-command
+"\C-l": clear-screen 
+
+set keymap vi-insert
+"\C-l": clear-screen 
+
+set show-mode-in-prompt on
+set vi-ins-mode-string \1\e[6 q\2
+set vi-cmd-mode-string \1\e[2 q\2
+
+"\C-k": history-search-backward
+"\C-j": history-search-forward
+
+# GDB-Specific Config
+$if Gdb
+"\C-r": "history\r"
+$endif
