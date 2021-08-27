@@ -1,0 +1,47 @@
+define hex(n) {
+	if (n < 10) {
+		printf("0x%x", n);
+	} else {
+		printf("%x", n);
+	}
+
+	return n;
+}
+
+define oct(n) {
+	if (n < 8) {
+		printf("0%o", n);
+	} else {
+		printf("%o", n);
+	}
+
+	return n;
+}
+
+define bin(n) {
+	if (n < 2) {
+		printf("0b%b", n);
+	} else {
+		printf("%b", n);
+	}
+
+	return n;
+}
+
+define GiB(n) {
+	printf("%d GiB", n / (1024 * 1024 * 1024));
+
+	return n;
+}
+
+define MiB(n) {
+	printf("%d MiB", n / (1024 * 1024));
+
+	return n;
+}
+
+define KiB(n) {
+	printf("%d KiB", n / 1024);
+
+	return n;
+}
