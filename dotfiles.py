@@ -45,7 +45,7 @@ def main() -> int:
     for path in set([os.path.dirname(i) for i in dotfiles.values()]):
         print(f"    {path}")
         if not dry_run:
-            os.makedirs(path)
+            os.makedirs(path, exist_ok=True)
     print("")
 
     # Create symbolic names
