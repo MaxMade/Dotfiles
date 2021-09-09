@@ -38,22 +38,44 @@ vim.call('plug#end')
 ---------
 
 -- clang
-require('lspconfig').clangd.setup({on_attach=require'completion'.on_attach, cmd={'clangd', '--background-index', '-j=4', '--clang-tidy'}})
+require('lspconfig').clangd.setup({on_attach=require('completion').on_attach, cmd={'clangd', '--background-index', '-j=4', '--clang-tidy'}})
 
 -- python-language-server
-require('lspconfig').pylsp.setup({on_attach=require'completion'.on_attach})
+require('lspconfig').pylsp.setup({on_attach=require('completion').on_attach})
 
 -- bash-language-server
-require('lspconfig').bashls.setup({on_attach=require'completion'.on_attach})
+require('lspconfig').bashls.setup({on_attach=require('completion').on_attach})
 
 -- texlab
-require('lspconfig').texlab.setup({on_attach=require'completion'.on_attach})
+require('lspconfig').texlab.setup({on_attach=require('completion').on_attach})
 
 -- gopls
-require('lspconfig').gopls.setup({on_attach=require'completion'.on_attach})
+require('lspconfig').gopls.setup({on_attach=require('completion').on_attach})
 
--- tsserver
-require('lspconfig').tsserver.setup({on_attach=require'completion'.on_attach})
+-- vscode-langservers-extracted
+require('lspconfig').html.setup({on_attach=require('completion').on_attach})
+require('lspconfig').cssls.setup({on_attach=require('completion').on_attach})
+require('lspconfig').jsonls.setup({on_attach=require('completion').on_attach})
+
+-- lua-language-server
+require('lspconfig/configs')['lualsp'] = {
+	default_config = {
+		cmd={'lua-language-server'},
+		filetypes={'lua'},
+		root_dir = require('lspconfig/util').path.dirname,
+	},
+}
+require('lspconfig').lualsp.setup({on_attach=require('completion').on_attach})
+
+-- ghdl_ls
+require('lspconfig/configs')['ghdl_ls'] = {
+	default_config = {
+		cmd={'ghdl-ls'},
+		filetypes={'vhdl'},
+		root_dir = require('lspconfig/util').path.dirname,
+	},
+}
+require('lspconfig').ghdl_ls.setup({on_attach=require('completion').on_attach})
 
 -- Fuzzy Search
 require('lspfuzzy').setup({jump_one = false})
