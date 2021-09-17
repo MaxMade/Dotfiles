@@ -78,39 +78,6 @@ require('lspconfig/configs')['ghdl_ls'] = {
 }
 require('lspconfig').ghdl_ls.setup({on_attach=require('completion').on_attach})
 
--- telescope
-require('telescope').setup{
-	defaults = {
-		mappings = {
-			i = {
-				["<C-j>"] = require('telescope.actions').move_selection_next,
-				["<C-k>"] = require('telescope.actions').move_selection_previous,
-				["<C-d>"] = require('telescope.actions').delete_buffer,
-			},
-
-			n = {
-				["<C-j>"] = require('telescope.actions').move_selection_next,
-				["<C-k>"] = require('telescope.actions').move_selection_previous,
-				["<C-d>"] = require('telescope.actions').delete_buffer,
-				["<C-c>"] = require('telescope.actions').close,
-				["gg"] = require('telescope.actions').move_to_top,
-				["G"] = require('telescope.actions').move_to_bottom,
-			},
-		},
-
-		layout_config = {
-			vertical = { width = 0.8 }
-		},
-
-	},
-	pickers = {},
-	extensions = {},
-}
-
--- completion
-vim.cmd([[autocmd BufEnter * lua require('completion').on_attach()]])
-
-
 ------------------
 -- VIM Settings --
 ------------------
@@ -189,6 +156,9 @@ vim.cmd 'silent! colorscheme gruvbox'
 -- Plugin Settings --
 ---------------------
 
+-- completion-nvim
+vim.cmd([[autocmd BufEnter * lua require('completion').on_attach()]])
+
 -- UltiSnips
 vim.g['UltiSnipsExpandTrigger'] = '<c-j>'
 vim.g['UltiSnipsJumpForwardTrigger'] = '<c-j>'
@@ -221,6 +191,34 @@ vim.g['better_whitespace_enabled'] = 1
 
 -- treesitter
 require('nvim-treesitter.configs').setup({highlight = {enable = true}})
+
+-- telescope
+require('telescope').setup({
+	defaults = {
+		mappings = {
+			i = {
+				["<C-j>"] = require('telescope.actions').move_selection_next,
+				["<C-k>"] = require('telescope.actions').move_selection_previous,
+				["<C-d>"] = require('telescope.actions').delete_buffer,
+			},
+
+			n = {
+				["<C-j>"] = require('telescope.actions').move_selection_next,
+				["<C-k>"] = require('telescope.actions').move_selection_previous,
+				["<C-c>"] = require('telescope.actions').close,
+				["gg"] = require('telescope.actions').move_to_top,
+				["G"] = require('telescope.actions').move_to_bottom,
+			},
+		},
+
+		layout_config = {
+			vertical = { width = 0.8 }
+		},
+
+	},
+	pickers = {},
+	extensions = {},
+})
 
 ------------------
 -- Key Mappings --
@@ -341,7 +339,7 @@ vim.api.nvim_set_keymap('i', '<s-tab>', '<Plug>(completion_smart_s_tab)', {})
 --------------
 
 vim.cmd [[
-au FileType gitcommit set tw=72
-au FileType python set expandtab
-au FileType tex set expandtab
+	au FileType gitcommit set tw=72
+	au FileType python    set expandtab
+	au FileType tex       set expandtab
 ]]
