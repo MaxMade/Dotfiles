@@ -19,7 +19,6 @@ vim.call('plug#begin', plugin_path)
 	vim.fn['plug#']('easymotion/vim-easymotion')
 	vim.fn['plug#']('mbbill/undotree')
 
-	vim.fn['plug#']('junegunn/fzf.vim')
 	vim.fn['plug#']('vimwiki/vimwiki')
 	vim.fn['plug#']('rhysd/vim-grammarous')
 
@@ -28,8 +27,11 @@ vim.call('plug#begin', plugin_path)
 
 	vim.fn['plug#']('neovim/nvim-lspconfig')
 	vim.fn['plug#']('nvim-lua/completion-nvim')
-	vim.fn['plug#']('ojroques/nvim-lspfuzzy')
 	vim.fn['plug#']('nvim-treesitter/nvim-treesitter', {['do'] = ':TSUpdate'})
+
+	vim.fn['plug#']('nvim-lua/plenary.nvim')
+	vim.fn['plug#']('nvim-telescope/telescope.nvim')
+	vim.fn['plug#']('kyazdani42/nvim-web-devicons')
 
 vim.call('plug#end')
 
@@ -77,8 +79,34 @@ require('lspconfig/configs')['ghdl_ls'] = {
 }
 require('lspconfig').ghdl_ls.setup({on_attach=require('completion').on_attach})
 
--- Fuzzy Search
-require('lspfuzzy').setup({jump_one = false})
+-- telescope
+require('telescope').setup{
+	defaults = {
+		mappings = {
+			i = {
+				["<C-j>"] = require('telescope.actions').move_selection_next,
+				["<C-k>"] = require('telescope.actions').move_selection_previous,
+				["<C-d>"] = require('telescope.actions').delete_buffer,
+			},
+
+			n = {
+				["<C-j>"] = require('telescope.actions').move_selection_next,
+				["<C-k>"] = require('telescope.actions').move_selection_previous,
+				["<C-d>"] = require('telescope.actions').delete_buffer,
+				["<C-c>"] = require('telescope.actions').close,
+				["gg"] = require('telescope.actions').move_to_top,
+				["G"] = require('telescope.actions').move_to_bottom,
+			},
+		},
+
+		layout_config = {
+			vertical = { width = 0.8 }
+		},
+
+	},
+	pickers = {},
+	extensions = {},
+}
 
 -- completion
 vim.cmd([[autocmd BufEnter * lua require('completion').on_attach()]])
@@ -102,8 +130,6 @@ vim.opt.backup = false
 vim.opt.writebackup = false
 vim.opt.swapfile = false
 vim.opt.autoindent = true
--- vim.opt.backspace = {'indent', 'eol', 'start'}
--- vim.opt.complete -= 'i'
 vim.opt.showmatch = true
 vim.opt.encoding = 'utf-8'
 vim.opt.listchars = {tab = '‣\t', trail = '␣', space = '␣', precedes = '⇤', extends = '⇥', eol = '↲'}
@@ -184,10 +210,6 @@ vim.g['lightline'] = {
 	}
 }
 
--- FZF
-vim.g['fzf_buffers_jump'] = 1
-vim.g['fzf_layout'] = {down = '60%'}
-
 -- Vimwiki
 vim.g['vimwiki_list'] = {{path = '~/.vimwiki/', syntax = 'markdown', ext = '.md'}}
 
@@ -240,14 +262,19 @@ vim.api.nvim_set_keymap('c', '<c-j>', '<DOWN>', {})
 -- Show hidden character
 vim.api.nvim_set_keymap('n', '<leader>q', ':set list! list?<CR>', {})
 
--- FZF
-vim.api.nvim_set_keymap('n', '<leader>o', ':Files<CR>', {})
-vim.api.nvim_set_keymap('n', '<leader>i', ':Buffers<CR>', {})
-vim.api.nvim_set_keymap('n', '<leader>?', ':Helptags<CR>', {})
-vim.api.nvim_set_keymap('n', '<leader>c', [[:exe 'Tags ' . expand('<cword>')<CR>]], {})
-vim.api.nvim_set_keymap('n', '<leader>C', ':Tags<CR>', {})
-vim.api.nvim_set_keymap('n', '<leader>r', [[:exe 'Ag ' . expand('<cword>')<CR>]], {})
-vim.api.nvim_set_keymap('n', '<leader>R', ':Ag<CR>', {})
+-- Telescope
+vim.api.nvim_set_keymap('n', '<leader>o', ':lua require("telescope.builtin").find_files()<CR>', {})
+vim.api.nvim_set_keymap('n', '<leader>O', ':lua require("telescope.builtin").git_files()<CR>', {})
+vim.api.nvim_set_keymap('n', '<leader>i', ':lua require("telescope.builtin").buffers({ignore_current_buffer=true})<CR>', {})
+vim.api.nvim_set_keymap('n', '<leader>?', ':lua require("telescope.builtin").help_tags()<CR>', {})
+vim.api.nvim_set_keymap('n', '<leader>c', ':lua require("telescope.builtin").tags()<CR>', {})
+vim.api.nvim_set_keymap('n', '<leader>C', ':lua require("telescope.builtin").current_buffer_tags()<CR>', {})
+vim.api.nvim_set_keymap('n', '<leader>r', ':lua require("telescope.builtin").grep_string()<CR>', {})
+vim.api.nvim_set_keymap('n', '<leader>R', ':lua require("telescope.builtin").live_grep()<CR>', {})
+vim.api.nvim_set_keymap('n', '<leader>x', ':lua require("telescope.builtin").commands()<CR>', {})
+vim.api.nvim_set_keymap('n', '<leader>h', ':lua require("telescope.builtin").command_history()<CR>', {})
+vim.api.nvim_set_keymap('n', '<leader>a', ':lua require("telescope.builtin").man_pages()<CR>', {})
+vim.api.nvim_set_keymap('n', '<leader>/', ':lua require("telescope.builtin").current_buffer_fuzzy_find()<CR>', {})
 
 -- Git
 vim.api.nvim_set_keymap('n', '<leader>gs', ':Git<CR>', {})
@@ -269,20 +296,23 @@ vim.api.nvim_set_keymap('n', '<F5>', ':setlocal spell! spelllang=en_us<CR>', {})
 vim.api.nvim_set_keymap('n', '<F6>', ':setlocal spell! spelllang=de_de<CR>', {})
 
 -- LSP
-vim.api.nvim_set_keymap('n', '<leader>yt', ':lua vim.lsp.buf.type_definition()<CR>', {})
 vim.api.nvim_set_keymap('n', '<leader>yh', ':lua vim.lsp.buf.hover()<CR>', {})
-vim.api.nvim_set_keymap('n', '<leader>yi', ':lua vim.lsp.buf.implementation()<CR>', {})
-vim.api.nvim_set_keymap('n', '<leader>yd', ':lua vim.lsp.buf.definition()<CR>', {})
-vim.api.nvim_set_keymap('n', '<leader>yc', ':lua vim.lsp.buf.declaration()<CR>', {})
 vim.api.nvim_set_keymap('n', '<leader>yr', ':lua vim.lsp.buf.rename()<CR>', {})
 vim.api.nvim_set_keymap('n', '<leader>yf', ':lua vim.lsp.buf.range_formatting()<CR>', {})
 vim.api.nvim_set_keymap('n', '<leader>yF', ':lua vim.lsp.buf.formatting()<CR>', {})
-vim.api.nvim_set_keymap('n', '<leader>ya', ':lua vim.lsp.buf.code_action()<CR>', {})
 vim.api.nvim_set_keymap('n', '<leader>yn', ':lua vim.lsp.diagnostic.goto_next()<CR>', {})
 vim.api.nvim_set_keymap('n', '<leader>yN', ':lua vim.lsp.diagnostic.goto_prev()<CR>', {})
-vim.api.nvim_set_keymap('n', '<leader>ys', ':lua vim.lsp.buf.workspace_symbol()<CR>', {})
-vim.api.nvim_set_keymap('n', '<leader>yg', ':LspDiagnostics 0<CR>', {})
-vim.api.nvim_set_keymap('n', '<leader>yG', ':LspDiagnostics<CR>', {})
+
+vim.api.nvim_set_keymap('n', '<leader>yc', ':lua require("telescope.builtin").lsp_references()<CR>', {})
+vim.api.nvim_set_keymap('n', '<leader>yt', ':lua require("telescope.builtin").lsp_type_definitions({jump_type="never"})<CR>', {})
+vim.api.nvim_set_keymap('n', '<leader>yi', ':lua require("telescope.builtin").lsp_implementations({jump_type="never"})<CR>', {})
+vim.api.nvim_set_keymap('n', '<leader>yd', ':lua require("telescope.builtin").lsp_definitions({jump_type="never"})<CR>', {})
+vim.api.nvim_set_keymap('n', '<leader>ya', ':lua require("telescope.builtin").lsp_code_actions()<CR>', {})
+vim.api.nvim_set_keymap('n', '<leader>yA', ':lua require("telescope.builtin").lsp_range_code_actions()<CR>', {})
+vim.api.nvim_set_keymap('n', '<leader>ys', ':lua require("telescope.builtin").lsp_document_symbols()<CR>', {})
+vim.api.nvim_set_keymap('n', '<leader>yS', ':lua require("telescope.builtin").lsp_workspace_symbols()<CR>', {})
+vim.api.nvim_set_keymap('n', '<leader>yg', ':lua require("telescope.builtin").lsp_document_diagnostics()<CR>', {})
+vim.api.nvim_set_keymap('n', '<leader>yG', ':lua require("telescope.builtin").lsp_workspace_diagnostics()<CR>', {})
 
 -- Python debugging
 vim.api.nvim_set_keymap('n', '<leader>pb', 'oimport pdb; pdb.set_trace()<ESC>', {})
