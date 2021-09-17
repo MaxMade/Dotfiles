@@ -18,12 +18,11 @@ vim.call('plug#begin', plugin_path)
 
 	vim.fn['plug#']('easymotion/vim-easymotion')
 	vim.fn['plug#']('mbbill/undotree')
-
 	vim.fn['plug#']('vimwiki/vimwiki')
 	vim.fn['plug#']('rhysd/vim-grammarous')
-
 	vim.fn['plug#']('godlygeek/tabular')
 	vim.fn['plug#']('ntpeters/vim-better-whitespace')
+	vim.fn['plug#']('lukas-reineke/indent-blankline.nvim')
 
 	vim.fn['plug#']('neovim/nvim-lspconfig')
 	vim.fn['plug#']('nvim-lua/completion-nvim')
