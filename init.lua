@@ -4,9 +4,7 @@
 
 local plugin_path = os.getenv('HOME') .. '/.local/share/nvim/plugged'
 vim.call('plug#begin', plugin_path)
-	vim.fn['plug#']('airblade/vim-gitgutter')
 	vim.fn['plug#']('tpope/vim-fugitive')
-
 	vim.fn['plug#']('tpope/vim-commentary')
 	vim.fn['plug#']('tpope/vim-surround')
 
@@ -31,7 +29,7 @@ vim.call('plug#begin', plugin_path)
 	vim.fn['plug#']('nvim-lua/plenary.nvim')
 	vim.fn['plug#']('nvim-telescope/telescope.nvim')
 	vim.fn['plug#']('kyazdani42/nvim-web-devicons')
-
+	vim.fn['plug#']('lewis6991/gitsigns.nvim')
 vim.call('plug#end')
 
 ---------
@@ -163,6 +161,9 @@ vim.cmd([[autocmd BufEnter * lua require('completion').on_attach()]])
 vim.g['UltiSnipsExpandTrigger'] = '<c-j>'
 vim.g['UltiSnipsJumpForwardTrigger'] = '<c-j>'
 vim.g['UltiSnipsJumpBackwardTrigger'] = '<c-k>'
+
+-- gitsigns
+require('gitsigns').setup()
 
 -- GruvBox
 vim.g['gruvbox_contrast_dark'] = 'hard'
