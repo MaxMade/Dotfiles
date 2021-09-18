@@ -142,10 +142,29 @@ vim.cmd [[
 augroup HighlightLSP
 	autocmd ColorScheme * hi LspDiagnosticsVirtualTextError       guifg=Red    gui=italic,bold,underline
 	autocmd ColorScheme * hi LspDiagnosticsVirtualTextWarning     guifg=Orange gui=italic,bold,underline
-	autocmd ColorScheme * hi LspDiagnosticsVirtualTextInformation guifg=Yellow gui=italic,bold,underline
 	autocmd ColorScheme * hi LspDiagnosticsVirtualTextHint        guifg=Green  gui=italic,bold,underline
+	autocmd ColorScheme * hi LspDiagnosticsVirtualTextInformation guifg=Yellow gui=italic,bold,underline
+	autocmd ColorScheme * hi LspDiagnosticsVirtualTextOther       guifg=Blue   gui=italic,bold,underline
+
+	autocmd ColorScheme * hi LspDiagnosticsUnderlineError         guisp=Red    gui=undercurl
+	autocmd ColorScheme * hi LspDiagnosticsUnderlineWarning       guisp=Orange gui=undercurl
+	autocmd ColorScheme * hi LspDiagnosticsUnderlineHint          guisp=Green  gui=undercurl
+	autocmd ColorScheme * hi LspDiagnosticsUnderlineInformation   guisp=Yellow gui=undercurl
+	autocmd ColorScheme * hi LspDiagnosticsUnderlineOther         guisp=Blue   gui=undercurl
+
+	autocmd ColorScheme * hi LspDiagnosticsSignError              guifg=Red
+	autocmd ColorScheme * hi LspDiagnosticsSignWarning            guifg=Orange
+	autocmd ColorScheme * hi LspDiagnosticsSignHint               guifg=Green
+	autocmd ColorScheme * hi LspDiagnosticsSignInformation        guifg=Yellow
+	autocmd ColorScheme * hi LspDiagnosticsSignOther              guifg=Blue
 augroup END
 ]]
+
+vim.fn.sign_define('LspDiagnosticsSignError', {text = '', texthl = 'LspDiagnosticsSignError', numhl = ""})
+vim.fn.sign_define('LspDiagnosticsSignWarning', {text = '', texthl = 'LspDiagnosticsSignWarning', numhl = ""})
+vim.fn.sign_define('LspDiagnosticsSignHint', {text = '', texthl = 'LspDiagnosticsSignHint', numhl = ""})
+vim.fn.sign_define('LspDiagnosticsSignInformation', {text = '', teexthl = 'LspDiagnosticsSignInformation', numhl = ""})
+vim.fn.sign_define('LspDiagnosticsSignOther', {text = '', texthl = 'LspDiagnosticsSignOther', numhl = ""})
 
 -- Colorscheme
 vim.cmd 'silent! colorscheme gruvbox'
@@ -206,6 +225,7 @@ require('telescope').setup({
 			n = {
 				["<C-j>"] = require('telescope.actions').move_selection_next,
 				["<C-k>"] = require('telescope.actions').move_selection_previous,
+				["<C-d>"] = require('telescope.actions').delete_buffer,
 				["<C-c>"] = require('telescope.actions').close,
 				["gg"] = require('telescope.actions').move_to_top,
 				["G"] = require('telescope.actions').move_to_bottom,
