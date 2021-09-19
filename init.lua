@@ -28,6 +28,7 @@ vim.call('plug#begin', plugin_path)
 
 	vim.fn['plug#']('nvim-lua/plenary.nvim')
 	vim.fn['plug#']('nvim-telescope/telescope.nvim')
+	vim.fn['plug#']('nvim-telescope/telescope-fzf-native.nvim', {['do'] = 'make'})
 	vim.fn['plug#']('kyazdani42/nvim-web-devicons')
 	vim.fn['plug#']('lewis6991/gitsigns.nvim')
 vim.call('plug#end')
@@ -246,8 +247,16 @@ require('telescope').setup({
 
 	},
 	pickers = {},
-	extensions = {},
+	extensions = {
+		fzf = {
+			fuzzy = true,
+			override_generic_sorter = true,
+			override_file_sorter = true,
+			case_mode = "smart_case",
+		}
+	},
 })
+require('telescope').load_extension('fzf')
 
 ------------------
 -- Key Mappings --
