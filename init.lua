@@ -8,7 +8,8 @@ vim.call('plug#begin', plugin_path)
 	vim.fn['plug#']('tpope/vim-commentary')
 	vim.fn['plug#']('tpope/vim-surround')
 
-	vim.fn['plug#']('morhetz/gruvbox')
+	vim.fn['plug#']('rktjmp/lush.nvim')
+	vim.fn['plug#']('ellisonleao/gruvbox.nvim')
 	vim.fn['plug#']('itchyny/lightline.vim')
 
 	vim.fn['plug#']('SirVer/ultisnips')
