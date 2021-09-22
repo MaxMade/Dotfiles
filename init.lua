@@ -126,6 +126,15 @@ vim.opt.expandtab = false
 -- Global options
 vim.g.mapleader = ' '
 
+-- Disable completion for TelescopePrompt
+vim.g.completion_chain_complete_list = {
+	default = {
+		{ complete_items = { "lsp", "path", "buffers", "snippet" } },
+		{ mode = "<c-p>" },
+		{ mode = "<c-n>" },
+	},
+	TelescopePrompt = {},
+}
 ------------
 -- Colors --
 ------------
