@@ -376,7 +376,7 @@ vim.api.nvim_set_keymap('n', '<F8>', ':ToggleWhitespace<CR>', {noremap = true})
 vim.api.nvim_set_keymap('n', '<leader>u', ':UndotreeToggle<CR>', {noremap = true})
 
 -- vim-easymotion
-vim.api.nvim_set_keymap('n', '<leader>', '<Plug>(easymotion-prefix)', {})
+vim.api.nvim_set_keymap('', '<leader>', '<Plug>(easymotion-prefix)', {})
 
 -- completion-nvim
 vim.api.nvim_set_keymap('i', '<tab>', '<Plug>(completion_smart_tab)', {})
