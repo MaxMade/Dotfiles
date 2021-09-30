@@ -8,7 +8,7 @@ vim.call('plug#begin', plugin_path)
 	vim.fn['plug#']('tpope/vim-commentary')
 	vim.fn['plug#']('tpope/vim-surround')
 
-	vim.fn['plug#']('rktjmp/lush.nvim')
+	vim.fn['plug#']('rktjmp/lush.nvim') -- Required by ellisonleao/gruvbox.nvim
 	vim.fn['plug#']('ellisonleao/gruvbox.nvim')
 	vim.fn['plug#']('itchyny/lightline.vim')
 
@@ -24,10 +24,15 @@ vim.call('plug#begin', plugin_path)
 	vim.fn['plug#']('lukas-reineke/indent-blankline.nvim')
 
 	vim.fn['plug#']('neovim/nvim-lspconfig')
-	vim.fn['plug#']('nvim-lua/completion-nvim')
 	vim.fn['plug#']('nvim-treesitter/nvim-treesitter', {['do'] = ':TSUpdate'})
+	vim.fn['plug#']('ray-x/lsp_signature.nvim')
 
-	vim.fn['plug#']('nvim-lua/plenary.nvim')
+	vim.fn['plug#']('hrsh7th/cmp-nvim-lsp')
+	vim.fn['plug#']('hrsh7th/cmp-buffer')
+	vim.fn['plug#']('hrsh7th/nvim-cmp')
+	vim.fn['plug#']('quangnguyen30192/cmp-nvim-ultisnips')
+
+	vim.fn['plug#']('nvim-lua/plenary.nvim') -- Required by nvim-telescope/telescope.nvim
 	vim.fn['plug#']('nvim-telescope/telescope.nvim')
 	vim.fn['plug#']('nvim-telescope/telescope-fzf-native.nvim', {['do'] = 'make'})
 	vim.fn['plug#']('kyazdani42/nvim-web-devicons')
@@ -39,24 +44,24 @@ vim.call('plug#end')
 ---------
 
 -- clang
-require('lspconfig').clangd.setup({on_attach=require('completion').on_attach, cmd={'clangd', '--background-index', '-j=4', '--clang-tidy'}})
+require('lspconfig').clangd.setup({cmd={'clangd', '--background-index', '-j=4', '--clang-tidy'}})
 
 -- python-language-server
-require('lspconfig').pylsp.setup({on_attach=require('completion').on_attach})
+require('lspconfig').pylsp.setup({})
 
 -- bash-language-server
-require('lspconfig').bashls.setup({on_attach=require('completion').on_attach})
+require('lspconfig').bashls.setup({})
 
 -- texlab
-require('lspconfig').texlab.setup({on_attach=require('completion').on_attach})
+require('lspconfig').texlab.setup({})
 
 -- gopls
-require('lspconfig').gopls.setup({on_attach=require('completion').on_attach})
+require('lspconfig').gopls.setup({})
 
 -- vscode-langservers-extracted
-require('lspconfig').html.setup({on_attach=require('completion').on_attach})
-require('lspconfig').cssls.setup({on_attach=require('completion').on_attach})
-require('lspconfig').jsonls.setup({on_attach=require('completion').on_attach})
+require('lspconfig').html.setup({})
+require('lspconfig').cssls.setup({})
+require('lspconfig').jsonls.setup({})
 
 -- lua-language-server
 require('lspconfig/configs')['lualsp'] = {
@@ -66,7 +71,7 @@ require('lspconfig/configs')['lualsp'] = {
 		root_dir = require('lspconfig/util').path.dirname,
 	},
 }
-require('lspconfig').lualsp.setup({on_attach=require('completion').on_attach})
+require('lspconfig').lualsp.setup({})
 
 -- ghdl_ls
 require('lspconfig/configs')['ghdl_ls'] = {
@@ -76,7 +81,7 @@ require('lspconfig/configs')['ghdl_ls'] = {
 		root_dir = require('lspconfig/util').path.dirname,
 	},
 }
-require('lspconfig').ghdl_ls.setup({on_attach=require('completion').on_attach})
+require('lspconfig').ghdl_ls.setup({})
 
 ------------------
 -- VIM Settings --
@@ -106,7 +111,7 @@ vim.opt.hlsearch = true
 vim.opt.timeoutlen = 1000
 vim.opt.ttimeoutlen = 0
 vim.opt.switchbuf = vim.opt.switchbuf + {'usetab', 'newtab'}
-vim.opt.completeopt = {'longest', 'menuone', 'noinsert', 'noselect'}
+vim.opt.completeopt = {'menu', 'menuone', 'noselect'}
 vim.opt.fillchars = {vert = '│'}
 vim.opt.whichwrap = vim.opt.whichwrap + '<>hl[]'
 vim.opt.termguicolors = true
@@ -126,15 +131,6 @@ vim.opt.expandtab = false
 -- Global options
 vim.g.mapleader = ' '
 
--- Disable completion for TelescopePrompt
-vim.g.completion_chain_complete_list = {
-	default = {
-		{ complete_items = { "lsp", "path", "buffers", "snippet" } },
-		{ mode = "<c-p>" },
-		{ mode = "<c-n>" },
-	},
-	TelescopePrompt = {},
-}
 ------------
 -- Colors --
 ------------
@@ -184,8 +180,36 @@ vim.cmd 'silent! colorscheme gruvbox'
 -- Plugin Settings --
 ---------------------
 
--- completion-nvim
-vim.cmd([[autocmd BufEnter * lua require('completion').on_attach()]])
+-- nvim-cmp
+require('cmp').setup({
+	snippet = {
+		expand = function(args)
+			vim.fn["UltiSnips#Anon"](args.body)
+		end,
+	},
+	mapping = {
+		['<Tab>'] = require('cmp').mapping.select_next_item(),
+		['<S-Tab>'] = require('cmp').mapping.select_prev_item(),
+		['<C-d>'] = require('cmp').mapping.scroll_docs(-4),
+		['<C-f>'] = require('cmp').mapping.scroll_docs(4),
+		['<C-Space>'] = require('cmp').mapping.complete(),
+		['<C-e>'] = require('cmp').mapping.close(),
+		['<CR>'] = require('cmp').mapping.confirm({ behavior = require('cmp').ConfirmBehavior.Replace, select = true }),
+	},
+	sources = {
+		{ name = 'nvim_lsp' },
+		{ name = 'ultisnips' },
+		{ name = 'buffer' },
+	}
+  })
+
+
+local lsp_servers = {'clangd', 'pylsp', 'bashls', 'texlab', 'gopls', 'html', 'cssls', 'jsonls', 'lualsp', 'ghdl_ls'}
+for _,v in pairs(lsp_servers) do
+	require('lspconfig')[v].setup({capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())})
+end
+
+vim.cmd [[autocmd FileType TelescopePrompt lua require('cmp').setup.buffer { enabled = false }]]
 
 -- UltiSnips
 vim.g['UltiSnipsExpandTrigger'] = '<c-j>'
@@ -220,10 +244,6 @@ vim.g['lightline'] = {
 
 -- Vimwiki
 vim.g['vimwiki_list'] = {{path = '~/.vimwiki/', syntax = 'markdown', ext = '.md'}}
-
--- completion-nvim
-vim.g['completion_enable_snippet'] = 'UltiSnips'
-vim.g['completion_matching_strategy_list'] = {'exact', 'substring', 'fuzzy', 'all'}
 
 -- vim-better-whitespace
 vim.g['better_whitespace_enabled'] = 1
@@ -267,6 +287,9 @@ require('telescope').setup({
 	},
 })
 require('telescope').load_extension('fzf')
+
+-- lsp_signature.nvim
+require('lsp_signature').setup({ hint_prefix="" })
 
 ------------------
 -- Key Mappings --
@@ -378,9 +401,7 @@ vim.api.nvim_set_keymap('n', '<leader>u', ':UndotreeToggle<CR>', {noremap = true
 -- vim-easymotion
 vim.api.nvim_set_keymap('', '<leader>', '<Plug>(easymotion-prefix)', {})
 
--- completion-nvim
-vim.api.nvim_set_keymap('i', '<tab>', '<Plug>(completion_smart_tab)', {})
-vim.api.nvim_set_keymap('i', '<s-tab>', '<Plug>(completion_smart_s_tab)', {})
+-- TODO: nvim-cmp
 
 --------------
 -- Autocmds --
