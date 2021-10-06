@@ -87,6 +87,9 @@ lspconfig.cssls.setup({})
 -- vscode-json-languageserver
 lspconfig.jsonls.setup({})
 
+-- rust-analyzer
+lspconfig.rust_analyzer.setup({})
+
 -- lua-language-server
 lspconfig_config ['lualsp'] = {
 	default_config = {
