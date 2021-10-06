@@ -78,9 +78,13 @@ lspconfig.texlab.setup({})
 -- gopls
 lspconfig.gopls.setup({})
 
--- vscode-langservers-extracted
+-- vscode-html-languageserver
 lspconfig.html.setup({})
+
+-- vscode-css-languageserver
 lspconfig.cssls.setup({})
+
+-- vscode-json-languageserver
 lspconfig.jsonls.setup({})
 
 -- lua-language-server
