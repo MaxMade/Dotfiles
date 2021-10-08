@@ -31,12 +31,12 @@ https://raw.githubusercontent.com/zsh-users/zsh-history-substring-search/master/
 
 ```
 
-The neovim setup depends on the [vim-plug](https://github.com/junegunn/vim-plug)
+The neovim setup depends on the [packer.nvim](https://github.com/wbthomason/packer.nvim)
 plugin manager which can be installed as follows:
 
 ```sh
-curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim \
---create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+git clone --depth 1 https://github.com/wbthomason/packer.nvim \
+~/.local/share/nvim/site/pack/packer/start/packer.nvim
 ```
 
 Beginning with version 0.5, neovim supports the language server protocol (LSP)

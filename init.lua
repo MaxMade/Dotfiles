@@ -2,43 +2,65 @@
 -- Plugins --
 -------------
 
-local plugin_path = os.getenv('HOME') .. '/.local/share/nvim/plugged'
-local plug = vim.fn['plug#']
-vim.call('plug#begin', plugin_path)
-	plug('tpope/vim-fugitive')
-	plug('tpope/vim-commentary')
-	plug('tpope/vim-surround')
+require('packer').startup(function(use)
+	use({'wbthomason/packer.nvim'})
 
-	plug('rktjmp/lush.nvim') -- Required by ellisonleao/gruvbox.nvim
-	plug('ellisonleao/gruvbox.nvim')
-	plug('itchyny/lightline.vim')
+	use({'tpope/vim-fugitive'})
 
-	plug('SirVer/ultisnips')
-	plug('honza/vim-snippets')
+	use({'tpope/vim-commentary'})
 
-	plug('easymotion/vim-easymotion')
-	plug('mbbill/undotree')
-	plug('vimwiki/vimwiki')
-	plug('rhysd/vim-grammarous')
-	plug('godlygeek/tabular')
-	plug('ntpeters/vim-better-whitespace')
-	plug('lukas-reineke/indent-blankline.nvim')
+	use({'tpope/vim-surround'})
 
-	plug('neovim/nvim-lspconfig')
-	plug('nvim-treesitter/nvim-treesitter', {['do'] = ':TSUpdate'})
-	plug('ray-x/lsp_signature.nvim')
+	use({'rktjmp/lush.nvim'}) -- Required by ellisonleao/gruvbox.nvim
+	use({'ellisonleao/gruvbox.nvim'})
+	use({'itchyny/lightline.vim'})
 
-	plug('hrsh7th/cmp-nvim-lsp')
-	plug('hrsh7th/cmp-buffer')
-	plug('hrsh7th/nvim-cmp')
-	plug('quangnguyen30192/cmp-nvim-ultisnips')
+	use({
+		'SirVer/ultisnips',
+		requires = {'honza/vim-snippets'}
+	})
 
-	plug('nvim-lua/plenary.nvim') -- Required by nvim-telescope/telescope.nvim
-	plug('nvim-telescope/telescope.nvim')
-	plug('nvim-telescope/telescope-fzf-native.nvim', {['do'] = 'make'})
-	plug('kyazdani42/nvim-web-devicons')
-	plug('lewis6991/gitsigns.nvim')
-vim.call('plug#end')
+	use({'easymotion/vim-easymotion'})
+
+	use({'mbbill/undotree'})
+
+	use({'vimwiki/vimwiki'})
+
+	use({'rhysd/vim-grammarous'})
+
+	use({'godlygeek/tabular'})
+
+	use({'ntpeters/vim-better-whitespace'})
+
+	use({'lukas-reineke/indent-blankline.nvim'})
+
+	use({'neovim/nvim-lspconfig'})
+
+	use({'nvim-treesitter/nvim-treesitter', run = ':TSUpdate'})
+
+	use({'ray-x/lsp_signature.nvim'})
+
+	use({
+		'hrsh7th/nvim-cmp',
+		requires = {
+			'hrsh7th/cmp-nvim-lsp',
+			'hrsh7th/cmp-buffer',
+			'quangnguyen30192/cmp-nvim-ultisnips'
+		}
+	})
+
+	use({
+		'nvim-telescope/telescope.nvim',
+		requires = {
+			{'nvim-lua/plenary.nvim'},
+			{'nvim-telescope/telescope-fzf-native.nvim', run = 'make'}
+		}
+	})
+
+	use({'kyazdani42/nvim-web-devicons'})
+
+	use({'lewis6991/gitsigns.nvim'})
+end)
 
 ---------------
 -- Variables --
