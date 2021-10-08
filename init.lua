@@ -13,7 +13,7 @@ require('packer').startup(function(use)
 
 	use({'rktjmp/lush.nvim'}) -- Required by ellisonleao/gruvbox.nvim
 	use({'ellisonleao/gruvbox.nvim'})
-	use({'itchyny/lightline.vim'})
+	use({'shadmansaleh/lualine.nvim'})
 
 	use({
 		'SirVer/ultisnips',
@@ -73,6 +73,7 @@ local vim_api = vim.api
 local vim_global = vim.g
 
 local cmp = require('cmp')
+local lualine = require('lualine')
 local lspconfig = require('lspconfig')
 local lspconfig_config = require('lspconfig/configs')
 local gitsigns = require('gitsigns')
@@ -80,6 +81,11 @@ local cmp_nvim_lsp = require('cmp_nvim_lsp')
 local lsp_signature = require('lsp_signature')
 local telescope = require('telescope')
 local telescope_actions = require('telescope.actions')
+
+local error_sign = ''
+local info_sign = ''
+local warning_sign = ''
+local hint_sign = ''
 
 ---------
 -- LSP --
@@ -184,46 +190,16 @@ vim_global.mapleader = ' '
 -- Colors --
 ------------
 
-vim_cmd [[
-augroup HighlighSpelling
-	autocmd!
-	autocmd ColorScheme * hi SpellBad                             guisp=Red    gui=italic,bold,undercurl
-	autocmd ColorScheme * hi SpellCap                             guisp=Yellow gui=italic,bold,undercurl
-	autocmd ColorScheme * hi SpellRare                            guisp=Blue   gui=italic,bold,undercurl
-	autocmd ColorScheme * hi SpellLocal                           guisp=Blue   gui=italic,bold,undercurl
-augroup END
-]]
-
-vim_cmd [[
-augroup HighlightLSP
-	autocmd ColorScheme * hi LspDiagnosticsVirtualTextError       guifg=Red    gui=italic,bold,underline
-	autocmd ColorScheme * hi LspDiagnosticsVirtualTextWarning     guifg=Orange gui=italic,bold,underline
-	autocmd ColorScheme * hi LspDiagnosticsVirtualTextHint        guifg=Green  gui=italic,bold,underline
-	autocmd ColorScheme * hi LspDiagnosticsVirtualTextInformation guifg=Yellow gui=italic,bold,underline
-	autocmd ColorScheme * hi LspDiagnosticsVirtualTextOther       guifg=Blue   gui=italic,bold,underline
-
-	autocmd ColorScheme * hi LspDiagnosticsUnderlineError         guisp=Red    gui=undercurl
-	autocmd ColorScheme * hi LspDiagnosticsUnderlineWarning       guisp=Orange gui=undercurl
-	autocmd ColorScheme * hi LspDiagnosticsUnderlineHint          guisp=Green  gui=undercurl
-	autocmd ColorScheme * hi LspDiagnosticsUnderlineInformation   guisp=Yellow gui=undercurl
-	autocmd ColorScheme * hi LspDiagnosticsUnderlineOther         guisp=Blue   gui=undercurl
-
-	autocmd ColorScheme * hi LspDiagnosticsSignError              guifg=Red
-	autocmd ColorScheme * hi LspDiagnosticsSignWarning            guifg=Orange
-	autocmd ColorScheme * hi LspDiagnosticsSignHint               guifg=Green
-	autocmd ColorScheme * hi LspDiagnosticsSignInformation        guifg=Yellow
-	autocmd ColorScheme * hi LspDiagnosticsSignOther              guifg=Blue
-augroup END
-]]
-
-vim_fn.sign_define('LspDiagnosticsSignError', {text = '', texthl = 'LspDiagnosticsSignError', numhl = ""})
-vim_fn.sign_define('LspDiagnosticsSignWarning', {text = '', texthl = 'LspDiagnosticsSignWarning', numhl = ""})
-vim_fn.sign_define('LspDiagnosticsSignHint', {text = '', texthl = 'LspDiagnosticsSignHint', numhl = ""})
-vim_fn.sign_define('LspDiagnosticsSignInformation', {text = '', teexthl = 'LspDiagnosticsSignInformation', numhl = ""})
-vim_fn.sign_define('LspDiagnosticsSignOther', {text = '', texthl = 'LspDiagnosticsSignOther', numhl = ""})
+vim_fn.sign_define('LspDiagnosticsSignError', {text = error_sign, texthl = 'LspDiagnosticsSignError', numhl = ""})
+vim_fn.sign_define('LspDiagnosticsSignWarning', {text = warning_sign, texthl = 'LspDiagnosticsSignWarning', numhl = ""})
+vim_fn.sign_define('LspDiagnosticsSignHint', {text = hint_sign, texthl = 'LspDiagnosticsSignHint', numhl = ""})
+vim_fn.sign_define('LspDiagnosticsSignInformation', {text = info_sign, teexthl = 'LspDiagnosticsSignInformation', numhl = ""})
+vim_fn.sign_define('LspDiagnosticsSignOther', {text = error_sign, texthl = 'LspDiagnosticsSignOther', numhl = ""})
 
 -- Colorscheme
-vim_cmd 'silent! colorscheme gruvbox'
+
+-- GruvBox
+vim_cmd('silent! colorscheme gruvbox')
 
 ---------------------
 -- Plugin Settings --
@@ -282,13 +258,48 @@ vim_global['gruvbox_contrast_light'] = 'hard'
 vim_global['gruvbox_invert_selection'] = 0
 vim_global['gruvbox_improved_warnings'] = 1
 
--- Lightline
-vim_global['lightline'] = {
-	colorscheme = 'gruvbox',
-	active = {
-		left  = {{'mode'}, {'readonly', 'filename', 'modified'}},
-		right = {{'lineinfo'}, {'percent'}, {'fileformat'}, {'filetype'}}
-	}
+-- lualine
+lualine.setup {
+  options = {
+    icons_enabled = true,
+    theme = 'gruvbox',
+    component_separators = {left = '', right = ''},
+    section_separators = {left = '', right = ''},
+    disabled_filetypes = {}
+  },
+  sections = {
+    lualine_a = {'mode'},
+	lualine_b = {
+		'branch',
+		'diff',
+		{
+			'diagnostics',
+			sources={'nvim_lsp'},
+			sections = {'error', 'warn', 'info', 'hint'},
+			symbols = {
+				error = error_sign .. '  ',
+				warn = warning_sign .. '  ',
+				info = info_sign .. '  ',
+				hint = hint_sign .. '  '
+			}
+		}
+	},
+    lualine_c = {'filename'},
+
+    lualine_x = {'encoding', 'fileformat', 'filetype'},
+    lualine_y = {'progress'},
+    lualine_z = {'location'}
+  },
+  inactive_sections = {
+    lualine_a = {},
+    lualine_b = {},
+    lualine_c = {'filename'},
+    lualine_x = {'location'},
+    lualine_y = {},
+    lualine_z = {}
+  },
+  tabline = {},
+  extensions = {}
 }
 
 -- Vimwiki
@@ -454,8 +465,8 @@ vim_api.nvim_set_keymap('', '<leader>', '<Plug>(easymotion-prefix)', {})
 -- Autocmds --
 --------------
 
-vim_cmd [[
+vim_cmd([[
 	au FileType gitcommit set tw=72
 	au FileType python    set expandtab
 	au FileType tex       set expandtab
-]]
+]])
