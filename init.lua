@@ -11,8 +11,12 @@ require('packer').startup(function(use)
 
 	use({'tpope/vim-surround'})
 
-	use({'rktjmp/lush.nvim'}) -- Required by ellisonleao/gruvbox.nvim
-	use({'ellisonleao/gruvbox.nvim'})
+	use({
+		'MaxMade/gruvbox.nvim',
+		branch = 'dev',
+		requires = {'rktjmp/lush.nvim'}
+	})
+
 	use({'shadmansaleh/lualine.nvim'})
 
 	use({
@@ -273,12 +277,6 @@ gitsigns.setup({
 		changedelete = {hl = 'GitSignsChange', text = '╍', numhl='GitSignsChangeNr', linehl='GitSignsChangeLn'},
 	},
 })
-
--- GruvBox
-vim_global['gruvbox_contrast_dark'] = 'hard'
-vim_global['gruvbox_contrast_light'] = 'hard'
-vim_global['gruvbox_invert_selection'] = 0
-vim_global['gruvbox_improved_warnings'] = 1
 
 -- lualine
 lualine.setup {
