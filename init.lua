@@ -84,7 +84,7 @@ local telescope_actions = require('telescope.actions')
 
 local error_sign = ''
 local info_sign = ''
-local warning_sign = ''
+local warning_sign = ''
 local hint_sign = ''
 
 ---------
