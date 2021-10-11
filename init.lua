@@ -20,7 +20,7 @@ require('packer').startup(function(use)
 		requires = {'honza/vim-snippets'}
 	})
 
-	use({'easymotion/vim-easymotion'})
+	use({'ggandor/lightspeed.nvim'})
 
 	use({'mbbill/undotree'})
 
@@ -77,6 +77,7 @@ local lualine = require('lualine')
 local lspconfig = require('lspconfig')
 local lspconfig_config = require('lspconfig/configs')
 local gitsigns = require('gitsigns')
+local lightspeed = require('lightspeed')
 local cmp_nvim_lsp = require('cmp_nvim_lsp')
 local lsp_signature = require('lsp_signature')
 local telescope = require('telescope')
@@ -186,9 +187,9 @@ vim_opt.expandtab = false
 -- Global options
 vim_global.mapleader = ' '
 
-------------
--- Colors --
-------------
+-----------
+-- Signs --
+-----------
 
 vim_fn.sign_define('LspDiagnosticsSignError', {text = error_sign, texthl = 'LspDiagnosticsSignError', numhl = ""})
 vim_fn.sign_define('LspDiagnosticsSignWarning', {text = warning_sign, texthl = 'LspDiagnosticsSignWarning', numhl = ""})
@@ -196,9 +197,30 @@ vim_fn.sign_define('LspDiagnosticsSignHint', {text = hint_sign, texthl = 'LspDia
 vim_fn.sign_define('LspDiagnosticsSignInformation', {text = info_sign, teexthl = 'LspDiagnosticsSignInformation', numhl = ""})
 vim_fn.sign_define('LspDiagnosticsSignOther', {text = error_sign, texthl = 'LspDiagnosticsSignOther', numhl = ""})
 
--- Colorscheme
+------------------
+-- Highlighting --
+------------------
 
--- GruvBox
+vim_cmd([[
+augroup LightspeedHighlight
+autocmd!
+autocmd   ColorScheme   *   hi   LightspeedLabel                    gui=bold,undercurl   guifg=lightgreen
+autocmd   ColorScheme   *   hi   LightspeedLabelOverlapped          gui=bold,undercurl   guifg=lightyellow
+autocmd   ColorScheme   *   hi   LightspeedLabelDistant             gui=bold,undercurl   guifg=lightgreen
+autocmd   ColorScheme   *   hi   LightspeedLabelDistantOverlapped   gui=bold,undercurl   guifg=lightblue
+autocmd   ColorScheme   *   hi   LightspeedShortcut                 gui=bold             guifg=black         guibg=lightgreen
+autocmd   ColorScheme   *   hi   LightspeedMaskedChar               gui=bold,undercurl   guifg=white
+autocmd   ColorScheme   *   hi   LightspeedGreyWash                                      guifg=grey
+autocmd   ColorScheme   *   hi   LightspeedUnlabeledMatch           gui=bold             guifg=black         guibg=white
+autocmd   ColorScheme   *   hi   LightspeedPendingOpArea            gui=bold             guifg=black         guibg=lightred
+autocmd   ColorScheme   *   hi   LightspeedOneCharMatch             gui=bold             guifg=black         guibg=lightgreen
+augroup end
+]])
+
+-----------------
+-- Colorscheme --
+-----------------
+
 vim_cmd('silent! colorscheme gruvbox')
 
 ---------------------
@@ -351,6 +373,9 @@ telescope.load_extension('fzf')
 -- lsp_signature.nvim
 lsp_signature.setup({hint_prefix=""})
 
+-- lightspeed
+lightspeed.setup({})
+
 ------------------
 -- Key Mappings --
 ------------------
@@ -457,9 +482,6 @@ vim_api.nvim_set_keymap('n', '<F8>', ':ToggleWhitespace<CR>', {noremap = true})
 
 -- Undo Tree
 vim_api.nvim_set_keymap('n', '<leader>u', ':UndotreeToggle<CR>', {noremap = true})
-
--- vim-easymotion
-vim_api.nvim_set_keymap('', '<leader>', '<Plug>(easymotion-prefix)', {})
 
 --------------
 -- Autocmds --
