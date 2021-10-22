@@ -17,7 +17,7 @@ require('packer').startup(function(use)
 		requires = {'rktjmp/lush.nvim'}
 	})
 
-	use({'shadmansaleh/lualine.nvim'})
+	use({'nvim-lualine/lualine.nvim'})
 
 	use({
 		'SirVer/ultisnips',
