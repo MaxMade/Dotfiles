@@ -143,6 +143,9 @@ lspconfig_config ['ghdl_ls'] = {
 }
 lspconfig.ghdl_ls.setup({})
 
+-- jdtls
+lspconfig.jdtls.setup({cmd = {'jdtls'}})
+
 ------------------
 -- VIM Settings --
 ------------------
