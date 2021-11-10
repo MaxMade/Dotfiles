@@ -26,8 +26,6 @@ require('packer').startup(function(use)
 
 	use({'ggandor/lightspeed.nvim'})
 
-	use({'mbbill/undotree'})
-
 	use({'rhysd/vim-grammarous'})
 
 	use({'godlygeek/tabular'})
@@ -472,9 +470,6 @@ vim_api.nvim_set_keymap('n', '<F7>', ':noh<CR>', {noremap = true})
 
 -- Highlight trailing whitespaces
 vim_api.nvim_set_keymap('n', '<F8>', ':ToggleWhitespace<CR>', {noremap = true})
-
--- Undo Tree
-vim_api.nvim_set_keymap('n', '<leader>u', ':UndotreeToggle<CR>', {noremap = true})
 
 --------------
 -- Autocmds --
