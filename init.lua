@@ -28,8 +28,6 @@ require('packer').startup(function(use)
 
 	use({'mbbill/undotree'})
 
-	use({'vimwiki/vimwiki'})
-
 	use({'rhysd/vim-grammarous'})
 
 	use({'godlygeek/tabular'})
@@ -325,9 +323,6 @@ lualine.setup {
   extensions = {}
 }
 
--- Vimwiki
-vim_global['vimwiki_list'] = {{path = '~/.vimwiki/', syntax = 'markdown', ext = '.md'}}
-
 -- vim-better-whitespace
 vim_global['better_whitespace_enabled'] = 1
 
@@ -471,9 +466,6 @@ vim_api.nvim_set_keymap('n', '<leader>yG', ':lua require("telescope.builtin").ls
 -- Python debugging
 vim_api.nvim_set_keymap('n', '<leader>pb', 'oimport pdb; pdb.set_trace()<ESC>', {})
 vim_api.nvim_set_keymap('n', '<leader>pB', 'Oimport pdb; pdb.set_trace()<ESC>', {})
-
--- vimwiki
-vim_api.nvim_set_keymap('n', '<Leader>k', '<Plug>VimwikiIndex', {})
 
 -- Clear search
 vim_api.nvim_set_keymap('n', '<F7>', ':noh<CR>', {noremap = true})
