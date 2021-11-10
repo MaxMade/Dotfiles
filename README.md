@@ -39,6 +39,11 @@ git clone --depth 1 https://github.com/wbthomason/packer.nvim \
 ~/.local/share/nvim/site/pack/packer/start/packer.nvim
 ```
 
+The tmux setup makes use of [tpm](https://github.com/tmux-plugins/tpm) which must be installed separately:
+```sh
+git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+```
+
 Beginning with version 0.5, neovim supports the language server protocol (LSP)
 for programming language-specific features such as:
 
