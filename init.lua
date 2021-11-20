@@ -32,6 +32,8 @@ require('packer').startup(function(use)
 
 	use({'ntpeters/vim-better-whitespace'})
 
+	use({'nvim-neorg/neorg'})
+
 	use({'lukas-reineke/indent-blankline.nvim'})
 
 	use({'neovim/nvim-lspconfig'})
@@ -73,6 +75,7 @@ local vim_api = vim.api
 local vim_global = vim.g
 
 local cmp = require('cmp')
+local neorg = require('neorg')
 local lualine = require('lualine')
 local lspconfig = require('lspconfig')
 local lspconfig_config = require('lspconfig/configs')
@@ -82,6 +85,8 @@ local cmp_nvim_lsp = require('cmp_nvim_lsp')
 local lsp_signature = require('lsp_signature')
 local telescope = require('telescope')
 local telescope_actions = require('telescope.actions')
+local treesitter_config = require('nvim-treesitter.configs')
+local parser_configs = require('nvim-treesitter.parsers').get_parser_configs()
 
 local error_sign = ''
 local info_sign = ''
@@ -250,6 +255,7 @@ cmp.setup({
 		{name = 'nvim_lsp'},
 		{name = 'ultisnips'},
 		{name = 'buffer'},
+		{name = 'neorg'},
 	}
  })
 
@@ -325,7 +331,19 @@ lualine.setup {
 vim_global['better_whitespace_enabled'] = 1
 
 -- treesitter
-require('nvim-treesitter.configs').setup({highlight = {enable = true}})
+
+parser_configs.norg = {
+    install_info = {
+        url = "https://github.com/nvim-neorg/tree-sitter-norg",
+        files = { "src/parser.c", "src/scanner.cc" },
+        branch = "main"
+    },
+}
+
+treesitter_config.setup({
+	highlight = {enable = true},
+	ensure_installed = { "c", "cpp", "python", "java", "go", "rust", "javascript", "lua", "bash", "latex", "html", "css", "norg" },
+})
 
 -- telescope
 telescope.setup({
@@ -369,6 +387,26 @@ lsp_signature.setup({hint_prefix=""})
 
 -- lightspeed
 lightspeed.setup({})
+
+-- neorg
+neorg.setup({
+	load = {
+		["core.defaults"] = {},
+		["core.norg.concealer"] = {},
+		["core.norg.completion"] = {
+			config = {
+				engine = "nvim-cmp"
+			}
+		},
+		["core.norg.dirman"] = {
+			config = {
+				workspaces = {
+					my_workspace = "~/neorg"
+				}
+			}
+		}
+	},
+})
 
 ------------------
 -- Key Mappings --
