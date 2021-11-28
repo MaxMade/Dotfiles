@@ -124,26 +124,6 @@ lspconfig.jsonls.setup({})
 -- rust-analyzer
 lspconfig.rust_analyzer.setup({})
 
--- lua-language-server
-lspconfig_config ['lualsp'] = {
-	default_config = {
-		cmd={'lua-language-server'},
-		filetypes={'lua'},
-		root_dir = require('lspconfig/util').path.dirname,
-	},
-}
-lspconfig.lualsp.setup({})
-
--- ghdl_ls
-lspconfig_config ['ghdl_ls'] = {
-	default_config = {
-		cmd={'ghdl-ls'},
-		filetypes={'vhdl'},
-		root_dir = require('lspconfig/util').path.dirname,
-	},
-}
-lspconfig.ghdl_ls.setup({})
-
 -- jdtls
 lspconfig.jdtls.setup({cmd = {'jdtls'}})
 
@@ -260,7 +240,7 @@ cmp.setup({
  })
 
 
-local lsp_servers = {'clangd', 'pylsp', 'bashls', 'texlab', 'gopls', 'html', 'cssls', 'jsonls', 'lualsp', 'ghdl_ls'}
+local lsp_servers = {'clangd', 'pylsp', 'bashls', 'texlab', 'gopls', 'html', 'cssls', 'jsonls'}
 for _,v in pairs(lsp_servers) do
 	lspconfig[v].setup({capabilities = cmp_nvim_lsp.update_capabilities(vim.lsp.protocol.make_client_capabilities())})
 end
