@@ -71,3 +71,23 @@ yay --aur -S vscode-langservers-extracted # WARNING: Installed from AUR
 # Debian
 apt install clang gopls
 ```
+
+```sh
+cd $JDTLS_HOME
+wget wget https://download.eclipse.org/jdtls/snapshots/jdt-language-server-$VERSION.tar.gz
+tar xvf jdt-language-server-$VERSION.tar.gz
+rm -f jdt-language-server-$VERSION.tar.gz
+```
+
+# Environment
+
+To setup environment correctly, the following exports must be added to `$HOME/.profile`.
+
+```sh
+export PATH=$HOME/.bin:$PATH
+export PATH=$HOME/.local/bin:$PATH
+export TERM=xterm-256color
+export EDITOR=nvim
+export GO111MODULE=on
+export JDTLS_HOME="$HOME/.local/share/jdtls"
+```

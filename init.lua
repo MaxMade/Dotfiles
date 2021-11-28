@@ -125,7 +125,7 @@ lspconfig.jsonls.setup({})
 lspconfig.rust_analyzer.setup({})
 
 -- jdtls
-lspconfig.jdtls.setup({cmd = {'jdtls'}})
+lspconfig.jdtls.setup({})
 
 ------------------
 -- VIM Settings --
@@ -240,7 +240,7 @@ cmp.setup({
  })
 
 
-local lsp_servers = {'clangd', 'pylsp', 'bashls', 'texlab', 'gopls', 'html', 'cssls', 'jsonls'}
+local lsp_servers = {'clangd', 'pylsp', 'bashls', 'texlab', 'gopls', 'html', 'cssls', 'jsonls', 'jdtls'}
 for _,v in pairs(lsp_servers) do
 	lspconfig[v].setup({capabilities = cmp_nvim_lsp.update_capabilities(vim.lsp.protocol.make_client_capabilities())})
 end
