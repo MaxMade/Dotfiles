@@ -279,7 +279,7 @@ lualine.setup {
 		'diff',
 		{
 			'diagnostics',
-			sources={'nvim_lsp'},
+			sources={'nvim_diagnostic'},
 			sections = {'error', 'warn', 'info', 'hint'},
 			symbols = {
 				error = error_sign .. '  ',
