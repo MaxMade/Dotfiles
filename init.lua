@@ -476,8 +476,8 @@ vim_api.nvim_set_keymap('n', '<leader>ya', ':lua require("telescope.builtin").ls
 vim_api.nvim_set_keymap('n', '<leader>yA', ':lua require("telescope.builtin").lsp_range_code_actions()<CR>', {})
 vim_api.nvim_set_keymap('n', '<leader>ys', ':lua require("telescope.builtin").lsp_document_symbols()<CR>', {})
 vim_api.nvim_set_keymap('n', '<leader>yS', ':lua require("telescope.builtin").lsp_workspace_symbols()<CR>', {})
-vim_api.nvim_set_keymap('n', '<leader>yg', ':lua require("telescope.builtin").lsp_document_diagnostics()<CR>', {})
-vim_api.nvim_set_keymap('n', '<leader>yG', ':lua require("telescope.builtin").lsp_workspace_diagnostics()<CR>', {})
+vim_api.nvim_set_keymap('n', '<leader>yg', ':lua require("telescope.builtin").diagnostics({bufnr=0})<CR>', {})
+vim_api.nvim_set_keymap('n', '<leader>yG', ':lua require("telescope.builtin").diagnostics()<CR>', {})
 
 -- Python debugging
 vim_api.nvim_set_keymap('n', '<leader>pb', 'oimport pdb; pdb.set_trace()<ESC>', {})
