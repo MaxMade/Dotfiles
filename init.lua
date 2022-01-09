@@ -11,11 +11,7 @@ require('packer').startup(function(use)
 
 	use({'tpope/vim-surround'})
 
-	use({
-		'MaxMade/gruvbox.nvim',
-		branch = 'dev',
-		requires = {'rktjmp/lush.nvim'}
-	})
+	use({'ellisonleao/gruvbox.nvim'})
 
 	use({'nvim-lualine/lualine.nvim'})
 
