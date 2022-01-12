@@ -20,6 +20,13 @@ require('packer').startup(function(use)
 		requires = {'honza/vim-snippets'}
 	})
 
+	use({
+		'folke/todo-comments.nvim',
+		requires = {
+			{'nvim-lua/plenary.nvim'},
+		}
+	})
+
 	use({'ggandor/lightspeed.nvim'})
 
 	use({'rhysd/vim-grammarous'})
@@ -79,6 +86,7 @@ local gitsigns = require('gitsigns')
 local lightspeed = require('lightspeed')
 local cmp_nvim_lsp = require('cmp_nvim_lsp')
 local lsp_signature = require('lsp_signature')
+local todo_comments = require('todo-comments')
 local telescope = require('telescope')
 local telescope_actions = require('telescope.actions')
 local treesitter_config = require('nvim-treesitter.configs')
@@ -383,6 +391,9 @@ neorg.setup({
 		}
 	},
 })
+
+-- todo-comments
+todo_comments.setup({})
 
 ------------------
 -- Key Mappings --
