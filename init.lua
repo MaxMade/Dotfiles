@@ -65,6 +65,8 @@ require('packer').startup(function(use)
 	use({'kyazdani42/nvim-web-devicons'})
 
 	use({'lewis6991/gitsigns.nvim'})
+
+	use({'lewis6991/spellsitter.nvim'})
 end)
 
 ---------------
@@ -83,6 +85,7 @@ local lualine = require('lualine')
 local lspconfig = require('lspconfig')
 local lspconfig_config = require('lspconfig/configs')
 local gitsigns = require('gitsigns')
+local gitsigns = require('spellsitter')
 local lightspeed = require('lightspeed')
 local cmp_nvim_lsp = require('cmp_nvim_lsp')
 local lsp_signature = require('lsp_signature')
