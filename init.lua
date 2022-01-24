@@ -85,7 +85,7 @@ local lualine = require('lualine')
 local lspconfig = require('lspconfig')
 local lspconfig_config = require('lspconfig/configs')
 local gitsigns = require('gitsigns')
-local gitsigns = require('spellsitter')
+local spellsitter = require('spellsitter')
 local lightspeed = require('lightspeed')
 local cmp_nvim_lsp = require('cmp_nvim_lsp')
 local lsp_signature = require('lsp_signature')
@@ -394,6 +394,9 @@ neorg.setup({
 		}
 	},
 })
+
+-- spellsitter
+spellsitter.setup({})
 
 -- todo-comments
 todo_comments.setup({})
