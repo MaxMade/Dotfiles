@@ -29,6 +29,8 @@ require('packer').startup(function(use)
 
 	use({'ggandor/lightspeed.nvim'})
 
+	use({'kevinhwang91/nvim-hlslens'})
+
 	use({'rhysd/vim-grammarous'})
 
 	use({'godlygeek/tabular'})
@@ -501,6 +503,18 @@ vim_api.nvim_set_keymap('n', '<F7>', ':noh<CR>', {noremap = true})
 
 -- Highlight trailing whitespaces
 vim_api.nvim_set_keymap('n', '<F8>', ':ToggleWhitespace<CR>', {noremap = true})
+
+-- nvim-hlslens
+vim.cmd([[
+noremap <silent> n <Cmd>execute('normal! ' . v:count1 . 'n')<CR>
+            \<Cmd>lua require('hlslens').start()<CR>
+noremap <silent> N <Cmd>execute('normal! ' . v:count1 . 'N')<CR>
+            \<Cmd>lua require('hlslens').start()<CR>
+noremap * *<Cmd>lua require('hlslens').start()<CR>
+noremap # #<Cmd>lua require('hlslens').start()<CR>
+noremap g* g*<Cmd>lua require('hlslens').start()<CR>
+noremap g# g#<Cmd>lua require('hlslens').start()<CR>
+]])
 
 --------------
 -- Autocmds --
