@@ -58,13 +58,13 @@ Those language servers must be installed separately:
 ```sh
 # Arch Linux
 pacman -S clang
-pacman -S python-language-server # May create symlink from /usr/bin/pylp to /usr/bin/pylsp
+pacman -S python-lsp-server
 pacman -S bash-language-server
 pacman -S texlab
 pacman -S gopls
 pacman -S python-pyghdl
 
-yay --aur -S vscode-langservers-extracted # WARNING: Installed from AUR
+pacman -S vscode-html-languageserver vscode-css-languageserver vscode-json-languageserver
 ```
 
 ```sh
