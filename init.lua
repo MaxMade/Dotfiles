@@ -496,8 +496,8 @@ vim_api.nvim_set_keymap('n', '<leader>yr', ':lua vim.lsp.buf.rename()<CR>', {})
 vim_api.nvim_set_keymap('n', '<leader>yf', ':lua vim.lsp.buf.range_formatting()<CR>', {})
 vim_api.nvim_set_keymap('n', '<leader>yF', ':lua vim.lsp.buf.formatting()<CR>', {})
 
-vim_api.nvim_set_keymap('n', '<leader>yn', ':lua vim.diagnostic.goto_next():silent! call repeat#set("<Leader>yn", v:count)<CR><CR>', {})
-vim_api.nvim_set_keymap('n', '<leader>yN', ':lua vim.diagnostic.goto_prev():silent! call repeat#set("<Leader>yN", v:count)<CR><CR>', {})
+vim_api.nvim_set_keymap('n', '<leader>yn', ':lua vim.diagnostic.goto_next()<CR>:silent! call repeat#set("<Leader>yn", v:count)<CR>', {})
+vim_api.nvim_set_keymap('n', '<leader>yN', ':lua vim.diagnostic.goto_prev()<CR>:silent! call repeat#set("<Leader>yN", v:count)<CR>', {})
 
 vim_api.nvim_set_keymap('n', '<leader>yc', ':lua require("telescope.builtin").lsp_references()<CR>', {})
 vim_api.nvim_set_keymap('n', '<leader>yt', ':lua require("telescope.builtin").lsp_type_definitions({jump_type="never"})<CR>', {})
