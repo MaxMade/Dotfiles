@@ -11,8 +11,6 @@ require('packer').startup(function(use)
 
 	use({'tpope/vim-surround'})
 
-	use({'tpope/vim-repeat'})
-
 	use({'ellisonleao/gruvbox.nvim'})
 
 	use({'nvim-lualine/lualine.nvim'})
@@ -480,8 +478,8 @@ vim_api.nvim_set_keymap('n', '<leader>gl', ':diffget //2<CR>', {})
 -- Make
 vim_api.nvim_set_keymap('n', '<leader>mm', ':make! ', {})
 vim_api.nvim_set_keymap('n', '<leader>mo', ':cw<CR>', {})
-vim_api.nvim_set_keymap('n', '<leader>mn', ':cnext<CR>:silent! call repeat#set("<Leader>mn", v:count)<CR><CR>', {})
-vim_api.nvim_set_keymap('n', '<leader>mN', ':cprev<CR>:silent! call repeat#set("<Leader>mN", v:count)<CR><CR>', {})
+vim_api.nvim_set_keymap('n', '<leader>mn', ':cnext<CR>', {})
+vim_api.nvim_set_keymap('n', '<leader>mN', ':cprev<CR>', {})
 
 -- Spell-/Grammar-Checking
 vim_api.nvim_set_keymap('n', '<F2>', ':GrammarousCheck --lang=eng<CR>', {})
@@ -496,8 +494,8 @@ vim_api.nvim_set_keymap('n', '<leader>yr', ':lua vim.lsp.buf.rename()<CR>', {})
 vim_api.nvim_set_keymap('n', '<leader>yf', ':lua vim.lsp.buf.range_formatting()<CR>', {})
 vim_api.nvim_set_keymap('n', '<leader>yF', ':lua vim.lsp.buf.formatting()<CR>', {})
 
-vim_api.nvim_set_keymap('n', '<leader>yn', ':lua vim.diagnostic.goto_next()<CR>:silent! call repeat#set("<Leader>yn", v:count)<CR>', {})
-vim_api.nvim_set_keymap('n', '<leader>yN', ':lua vim.diagnostic.goto_prev()<CR>:silent! call repeat#set("<Leader>yN", v:count)<CR>', {})
+vim_api.nvim_set_keymap('n', '<leader>yn', ':lua vim.diagnostic.goto_next()<CR>', {})
+vim_api.nvim_set_keymap('n', '<leader>yN', ':lua vim.diagnostic.goto_prev()<CR>', {})
 
 vim_api.nvim_set_keymap('n', '<leader>yc', ':lua require("telescope.builtin").lsp_references()<CR>', {})
 vim_api.nvim_set_keymap('n', '<leader>yt', ':lua require("telescope.builtin").lsp_type_definitions({jump_type="never"})<CR>', {})
@@ -535,14 +533,14 @@ vim_api.nvim_set_keymap('n', '<leader>do', ':lua require("dap").repl.open()<CR>'
 vim_api.nvim_set_keymap('n', '<leader>dg', ':lua require("dap").run_to_cursor()<CR>', {})
 vim_api.nvim_set_keymap('n', '<leader>dt', ':lua require("dap").terminate()<CR>', {})
 
-vim_api.nvim_set_keymap('n', '<leader>dc', ':lua require("dap").continue()<CR>:silent! call repeat#set("<Leader>dc", v:count)<CR>', {})
-vim_api.nvim_set_keymap('n', '<leader>dn', ':lua require("dap").step_over()<CR>:silent! call repeat#set("<Leader>dn", v:count)<CR>', {})
-vim_api.nvim_set_keymap('n', '<leader>ds', ':lua require("dap").step_into()<CR>:silent! call repeat#set("<Leader>ds", v:count)<CR>', {})
-vim_api.nvim_set_keymap('n', '<leader>df', ':lua require("dap").step_out()<CR>:silent! call repeat#set("<Leader>df", v:count)<CR>', {})
-vim_api.nvim_set_keymap('n', '<leader>db', ':lua require("dap").toggle_breakpoint()<CR>:silent! call repeat#set("<Leader>db", v:count)<CR>', {})
+vim_api.nvim_set_keymap('n', '<leader>dc', ':lua require("dap").continue()<CR>', {})
+vim_api.nvim_set_keymap('n', '<leader>dn', ':lua require("dap").step_over()<CR>', {})
+vim_api.nvim_set_keymap('n', '<leader>ds', ':lua require("dap").step_into()<CR>', {})
+vim_api.nvim_set_keymap('n', '<leader>df', ':lua require("dap").step_out()<CR>', {})
+vim_api.nvim_set_keymap('n', '<leader>db', ':lua require("dap").toggle_breakpoint()<CR>', {})
 
-vim_api.nvim_set_keymap('n', '<leader>dh', ':lua require("dapui").eval()<CR>:silent! call repeat#set("<Leader>dh", v:count)<CR>', {})
-vim_api.nvim_set_keymap('n', '<leader>dl', ':lua require("dapui").float_element("stacks")<CR>:silent! call repeat#set("<Leader>dl", v:count)<CR>', {})
+vim_api.nvim_set_keymap('n', '<leader>dh', ':lua require("dapui").eval()<CR>', {})
+vim_api.nvim_set_keymap('n', '<leader>dl', ':lua require("dapui").float_element("stacks")<CR>', {})
 
 --------------
 -- Autocmds --
