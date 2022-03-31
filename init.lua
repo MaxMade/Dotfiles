@@ -69,12 +69,6 @@ require('packer').startup(function(use)
 	use({'lewis6991/gitsigns.nvim'})
 
 	use({'lewis6991/spellsitter.nvim'})
-
-	use({'mfussenegger/nvim-dap'})
-	use({'rcarriga/nvim-dap-ui'})
-	use({'theHamsta/nvim-dap-virtual-text'})
-	use({'mfussenegger/nvim-dap-python'})
-	use({'leoluz/nvim-dap-go'})
 end)
 
 ---------------
@@ -88,7 +82,6 @@ local vim_api = vim.api
 local vim_global = vim.g
 
 local cmp = require('cmp')
-local dap = require('dap')
 local neorg = require('neorg')
 local lualine = require('lualine')
 local lspconfig = require('lspconfig')
@@ -410,12 +403,6 @@ spellsitter.setup({})
 -- todo-comments
 todo_comments.setup({})
 
--- nvim-dap
-require('nvim-dap-virtual-text').setup({})
-require("dapui").setup({})
-require('dap-go').setup({})
-require('dap-python').setup('/usr/bin/python')
-
 ------------------
 -- Key Mappings --
 ------------------
@@ -525,22 +512,6 @@ noremap # #<Cmd>lua require('hlslens').start()<CR>
 noremap g* g*<Cmd>lua require('hlslens').start()<CR>
 noremap g# g#<Cmd>lua require('hlslens').start()<CR>
 ]])
-
--- nvim-dap
-vim_api.nvim_set_keymap('n', '<leader>dd', ':lua require("dap").continue()<CR>', {})
-vim_api.nvim_set_keymap('n', '<leader>dB', ':lua require("dap").set_breakpoint(vim.fn.input("Breakpoint condition: "))<CR>', {})
-vim_api.nvim_set_keymap('n', '<leader>do', ':lua require("dap").repl.open()<CR>', {})
-vim_api.nvim_set_keymap('n', '<leader>dg', ':lua require("dap").run_to_cursor()<CR>', {})
-vim_api.nvim_set_keymap('n', '<leader>dt', ':lua require("dap").terminate()<CR>', {})
-
-vim_api.nvim_set_keymap('n', '<leader>dc', ':lua require("dap").continue()<CR>', {})
-vim_api.nvim_set_keymap('n', '<leader>dn', ':lua require("dap").step_over()<CR>', {})
-vim_api.nvim_set_keymap('n', '<leader>ds', ':lua require("dap").step_into()<CR>', {})
-vim_api.nvim_set_keymap('n', '<leader>df', ':lua require("dap").step_out()<CR>', {})
-vim_api.nvim_set_keymap('n', '<leader>db', ':lua require("dap").toggle_breakpoint()<CR>', {})
-
-vim_api.nvim_set_keymap('n', '<leader>dh', ':lua require("dapui").eval()<CR>', {})
-vim_api.nvim_set_keymap('n', '<leader>dl', ':lua require("dapui").float_element("stacks")<CR>', {})
 
 --------------
 -- Autocmds --
