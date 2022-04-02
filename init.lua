@@ -52,6 +52,7 @@ require('packer').startup(function(use)
 		requires = {
 			'hrsh7th/cmp-nvim-lsp',
 			'hrsh7th/cmp-buffer',
+			'hrsh7th/cmp-path',
 			'quangnguyen30192/cmp-nvim-ultisnips'
 		}
 	})
@@ -238,6 +239,7 @@ cmp.setup({
 		{name = 'nvim_lsp'},
 		{name = 'ultisnips'},
 		{name = 'buffer'},
+		{name = 'path'},
 		{name = 'neorg'},
 	}
  })
