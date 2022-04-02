@@ -16,8 +16,8 @@ require('packer').startup(function(use)
 	use({'nvim-lualine/lualine.nvim'})
 
 	use({
-		'SirVer/ultisnips',
-		requires = {'honza/vim-snippets'}
+		'L3MON4D3/LuaSnip',
+		requires = {'rafamadriz/friendly-snippets'}
 	})
 
 	use({
@@ -53,7 +53,7 @@ require('packer').startup(function(use)
 			'hrsh7th/cmp-nvim-lsp',
 			'hrsh7th/cmp-buffer',
 			'hrsh7th/cmp-path',
-			'quangnguyen30192/cmp-nvim-ultisnips'
+			'saadparwaiz1/cmp_luasnip'
 		}
 	})
 
@@ -223,7 +223,7 @@ vim.cmd('silent! colorscheme gruvbox')
 cmp.setup({
 	snippet = {
 		expand = function(args)
-			vim.fn["UltiSnips#Anon"](args.body)
+			require('luasnip').lsp_expand(args.body)
 		end,
 	},
 	mapping = {
@@ -237,12 +237,13 @@ cmp.setup({
 	},
 	sources = {
 		{name = 'nvim_lsp'},
-		{name = 'ultisnips'},
+		{name = 'luasnip'},
 		{name = 'buffer'},
 		{name = 'path'},
 		{name = 'neorg'},
 	}
  })
+require("luasnip.loaders.from_vscode").lazy_load()
 
 
 local lsp_servers = {'clangd', 'pylsp', 'bashls', 'texlab', 'gopls', 'html', 'cssls', 'jsonls', 'jdtls'}
@@ -251,11 +252,6 @@ for _,v in pairs(lsp_servers) do
 end
 
 vim.cmd [[autocmd FileType TelescopePrompt lua cmp.setup.buffer {enabled = false}]]
-
--- UltiSnips
-vim.g['UltiSnipsExpandTrigger'] = '<c-j>'
-vim.g['UltiSnipsJumpForwardTrigger'] = '<c-j>'
-vim.g['UltiSnipsJumpBackwardTrigger'] = '<c-k>'
 
 -- gitsigns
 gitsigns.setup({
@@ -316,7 +312,6 @@ lualine.setup {
 vim.g['better_whitespace_enabled'] = 1
 
 -- treesitter
-
 parser_configs.norg = {
     install_info = {
         url = "https://github.com/nvim-neorg/tree-sitter-norg",
@@ -505,6 +500,12 @@ vim.api.nvim_set_keymap('n', '#', [[#<Cmd>lua require('hlslens').start()<CR>]], 
 vim.api.nvim_set_keymap('n', 'g*', [[g*<Cmd>lua require('hlslens').start()<CR>]], {noremap = true, silent = true})
 vim.api.nvim_set_keymap('n', 'g#', [[g#<Cmd>lua require('hlslens').start()<CR>]], {noremap = true, silent = true})
 vim.api.nvim_set_keymap('n', '<Leader>l', ':noh<CR>', {noremap = true, silent = true})
+
+-- LuaSnip
+vim.api.nvim_set_keymap("i", "<C-j>", '<cmd>lua require("luasnip").jump(1)<CR>', {silent=true})
+vim.api.nvim_set_keymap("s", "<C-j>", '<cmd>lua require("luasnip").jump(1)<CR>', {silent=true})
+vim.api.nvim_set_keymap("i", "<C-k>", '<cmd>lua require("luasnip").jump(-1)<CR>', {silent=true})
+vim.api.nvim_set_keymap("s", "<C-k>", '<cmd>lua require("luasnip").jump(-1)<CR>', {silent=true})
 
 --------------
 -- Autocmds --
