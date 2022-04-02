@@ -75,12 +75,6 @@ end)
 -- Variables --
 ---------------
 
-local vim_fn = vim.fn
-local vim_opt = vim.opt
-local vim_cmd = vim.cmd
-local vim_api = vim.api
-local vim_global = vim.g
-
 local cmp = require('cmp')
 local neorg = require('neorg')
 local lualine = require('lualine')
@@ -141,64 +135,64 @@ lspconfig.jdtls.setup({})
 ------------------
 
 -- Generic settings
-vim_opt.clipboard = 'unnamedplus'
-vim_opt.incsearch = true
-vim_opt.cursorline = true
-vim_opt.number = true
-vim_opt.relativenumber = true
-vim_opt.ignorecase = true
-vim_opt.smartcase = true
-vim_opt.splitright = true
-vim_opt.splitbelow = true
-vim_opt.backup = false
-vim_opt.writebackup = false
-vim_opt.swapfile = false
-vim_opt.autoindent = true
-vim_opt.showmatch = true
-vim_opt.encoding = 'utf-8'
-vim_opt.listchars = {tab = '‣\t', trail = '␣', space = '␣', precedes = '⇤', extends = '⇥', eol = '↲'}
-vim_opt.wrap = false
-vim_opt.colorcolumn = '80'
-vim_opt.laststatus = 2
-vim_opt.hlsearch = true
-vim_opt.timeoutlen = 1000
-vim_opt.ttimeoutlen = 0
-vim_opt.switchbuf = vim_opt.switchbuf + {'usetab', 'newtab'}
-vim_opt.completeopt = {'menu', 'menuone', 'noselect'}
-vim_opt.fillchars = {vert = '│'}
-vim_opt.whichwrap = vim_opt.whichwrap + '<>hl[]'
-vim_opt.termguicolors = true
-vim_opt.hidden = true
-vim_opt.inccommand = 'nosplit'
-vim_opt.background = 'dark'
-vim_opt.wildmenu = true
-vim_opt.wildmode = {'longest:full', 'full'}
-vim_opt.tags = './tags;$HOME'
-vim_opt.guicursor = 'n-v-c:block-Cursor/lCursor,i-ci-ve:ver25-Cursor2/lCursor2,r-cr:hor20,o:hor50'
+vim.opt.clipboard = 'unnamedplus'
+vim.opt.incsearch = true
+vim.opt.cursorline = true
+vim.opt.number = true
+vim.opt.relativenumber = true
+vim.opt.ignorecase = true
+vim.opt.smartcase = true
+vim.opt.splitright = true
+vim.opt.splitbelow = true
+vim.opt.backup = false
+vim.opt.writebackup = false
+vim.opt.swapfile = false
+vim.opt.autoindent = true
+vim.opt.showmatch = true
+vim.opt.encoding = 'utf-8'
+vim.opt.listchars = {tab = '‣\t', trail = '␣', space = '␣', precedes = '⇤', extends = '⇥', eol = '↲'}
+vim.opt.wrap = false
+vim.opt.colorcolumn = '80'
+vim.opt.laststatus = 2
+vim.opt.hlsearch = true
+vim.opt.timeoutlen = 1000
+vim.opt.ttimeoutlen = 0
+vim.opt.switchbuf = vim.opt.switchbuf + {'usetab', 'newtab'}
+vim.opt.completeopt = {'menu', 'menuone', 'noselect'}
+vim.opt.fillchars = {vert = '│'}
+vim.opt.whichwrap = vim.opt.whichwrap + '<>hl[]'
+vim.opt.termguicolors = true
+vim.opt.hidden = true
+vim.opt.inccommand = 'nosplit'
+vim.opt.background = 'dark'
+vim.opt.wildmenu = true
+vim.opt.wildmode = {'longest:full', 'full'}
+vim.opt.tags = './tags;$HOME'
+vim.opt.guicursor = 'n-v-c:block-Cursor/lCursor,i-ci-ve:ver25-Cursor2/lCursor2,r-cr:hor20,o:hor50'
 
-vim_opt.tabstop = 4
-vim_opt.shiftwidth = 4
-vim_opt.softtabstop = 4
-vim_opt.expandtab = false
+vim.opt.tabstop = 4
+vim.opt.shiftwidth = 4
+vim.opt.softtabstop = 4
+vim.opt.expandtab = false
 
 -- Global options
-vim_global.mapleader = ' '
+vim.g.mapleader = ' '
 
 -----------
 -- Signs --
 -----------
 
-vim_fn.sign_define('LspDiagnosticsSignError', {text = error_sign, texthl = 'LspDiagnosticsSignError', numhl = ""})
-vim_fn.sign_define('LspDiagnosticsSignWarning', {text = warning_sign, texthl = 'LspDiagnosticsSignWarning', numhl = ""})
-vim_fn.sign_define('LspDiagnosticsSignHint', {text = hint_sign, texthl = 'LspDiagnosticsSignHint', numhl = ""})
-vim_fn.sign_define('LspDiagnosticsSignInformation', {text = info_sign, teexthl = 'LspDiagnosticsSignInformation', numhl = ""})
-vim_fn.sign_define('LspDiagnosticsSignOther', {text = error_sign, texthl = 'LspDiagnosticsSignOther', numhl = ""})
+vim.fn.sign_define('LspDiagnosticsSignError', {text = error_sign, texthl = 'LspDiagnosticsSignError', numhl = ""})
+vim.fn.sign_define('LspDiagnosticsSignWarning', {text = warning_sign, texthl = 'LspDiagnosticsSignWarning', numhl = ""})
+vim.fn.sign_define('LspDiagnosticsSignHint', {text = hint_sign, texthl = 'LspDiagnosticsSignHint', numhl = ""})
+vim.fn.sign_define('LspDiagnosticsSignInformation', {text = info_sign, teexthl = 'LspDiagnosticsSignInformation', numhl = ""})
+vim.fn.sign_define('LspDiagnosticsSignOther', {text = error_sign, texthl = 'LspDiagnosticsSignOther', numhl = ""})
 
 ------------------
 -- Highlighting --
 ------------------
 
-vim_cmd([[
+vim.cmd([[
 augroup LightspeedHighlight
 autocmd!
 autocmd   ColorScheme   *   hi   LightspeedLabel                    gui=bold,undercurl   guifg=lightgreen
@@ -218,7 +212,7 @@ augroup end
 -- Colorscheme --
 -----------------
 
-vim_cmd('silent! colorscheme gruvbox')
+vim.cmd('silent! colorscheme gruvbox')
 
 ---------------------
 -- Plugin Settings --
@@ -228,7 +222,7 @@ vim_cmd('silent! colorscheme gruvbox')
 cmp.setup({
 	snippet = {
 		expand = function(args)
-			vim_fn["UltiSnips#Anon"](args.body)
+			vim.fn["UltiSnips#Anon"](args.body)
 		end,
 	},
 	mapping = {
@@ -254,12 +248,12 @@ for _,v in pairs(lsp_servers) do
 	lspconfig[v].setup({capabilities = cmp_nvim_lsp.update_capabilities(vim.lsp.protocol.make_client_capabilities())})
 end
 
-vim_cmd [[autocmd FileType TelescopePrompt lua cmp.setup.buffer {enabled = false}]]
+vim.cmd [[autocmd FileType TelescopePrompt lua cmp.setup.buffer {enabled = false}]]
 
 -- UltiSnips
-vim_global['UltiSnipsExpandTrigger'] = '<c-j>'
-vim_global['UltiSnipsJumpForwardTrigger'] = '<c-j>'
-vim_global['UltiSnipsJumpBackwardTrigger'] = '<c-k>'
+vim.g['UltiSnipsExpandTrigger'] = '<c-j>'
+vim.g['UltiSnipsJumpForwardTrigger'] = '<c-j>'
+vim.g['UltiSnipsJumpBackwardTrigger'] = '<c-k>'
 
 -- gitsigns
 gitsigns.setup({
@@ -317,7 +311,7 @@ lualine.setup {
 }
 
 -- vim-better-whitespace
-vim_global['better_whitespace_enabled'] = 1
+vim.g['better_whitespace_enabled'] = 1
 
 -- treesitter
 
@@ -408,116 +402,113 @@ todo_comments.setup({})
 ------------------
 
 -- Undo, Redo
-vim_api.nvim_set_keymap('n', 'u', ':undo<CR>', {noremap = true})
-vim_api.nvim_set_keymap('n', 'U', ':redo<CR>', {noremap = true})
+vim.api.nvim_set_keymap('n', 'u', ':undo<CR>', {noremap = true})
+vim.api.nvim_set_keymap('n', 'U', ':redo<CR>', {noremap = true})
 
 -- Yanking
-vim_api.nvim_set_keymap('n', 'Y', 'y$', {noremap = true})
+vim.api.nvim_set_keymap('n', 'Y', 'y$', {noremap = true})
 
 -- Delete line
-vim_api.nvim_set_keymap('n', 'm', '"_d', {noremap = true})
-vim_api.nvim_set_keymap('v', 'm', '"_d', {noremap = true})
+vim.api.nvim_set_keymap('n', 'm', '"_d', {noremap = true})
+vim.api.nvim_set_keymap('v', 'm', '"_d', {noremap = true})
 
-vim_api.nvim_set_keymap('n', 'mm', '"_dd', {noremap = true})
+vim.api.nvim_set_keymap('n', 'mm', '"_dd', {noremap = true})
 
-vim_api.nvim_set_keymap('n', 'M', '"_D', {noremap = true})
-vim_api.nvim_set_keymap('v', 'M', '"_D', {noremap = true})
+vim.api.nvim_set_keymap('n', 'M', '"_D', {noremap = true})
+vim.api.nvim_set_keymap('v', 'M', '"_D', {noremap = true})
 
-vim_api.nvim_set_keymap('n', 'x', '"_x', {noremap = true})
-vim_api.nvim_set_keymap('v', 'x', '"_x', {noremap = true})
+vim.api.nvim_set_keymap('n', 'x', '"_x', {noremap = true})
+vim.api.nvim_set_keymap('v', 'x', '"_x', {noremap = true})
 
-vim_api.nvim_set_keymap('n', 'c', '"_c', {noremap = true})
-vim_api.nvim_set_keymap('v', 'c', '"_c', {noremap = true})
-vim_api.nvim_set_keymap('n', 'C', '"_C', {noremap = true})
+vim.api.nvim_set_keymap('n', 'c', '"_c', {noremap = true})
+vim.api.nvim_set_keymap('v', 'c', '"_c', {noremap = true})
+vim.api.nvim_set_keymap('n', 'C', '"_C', {noremap = true})
 
 -- Suspend
-vim_api.nvim_set_keymap('n', '<c-z>', ':sus<CR>', {})
-vim_api.nvim_set_keymap('v', '<c-z>', ':sus<CR>', {})
-vim_api.nvim_set_keymap('c', '<c-z>', ':sus<CR>', {})
+vim.api.nvim_set_keymap('n', '<c-z>', ':sus<CR>', {})
+vim.api.nvim_set_keymap('v', '<c-z>', ':sus<CR>', {})
+vim.api.nvim_set_keymap('c', '<c-z>', ':sus<CR>', {})
 
 -- Command history
-vim_api.nvim_set_keymap('c', '<c-k>', '<UP>', {})
-vim_api.nvim_set_keymap('c', '<c-j>', '<DOWN>', {})
+vim.api.nvim_set_keymap('c', '<c-k>', '<UP>', {})
+vim.api.nvim_set_keymap('c', '<c-j>', '<DOWN>', {})
 
 -- Show hidden character
-vim_api.nvim_set_keymap('n', '<leader>q', ':set list! list?<CR>', {})
+vim.api.nvim_set_keymap('n', '<leader>q', ':set list! list?<CR>', {})
 
 -- Telescope
-vim_api.nvim_set_keymap('n', '<leader>o', ':lua require("telescope.builtin").find_files()<CR>', {})
-vim_api.nvim_set_keymap('n', '<leader>O', ':lua require("telescope.builtin").git_files()<CR>', {})
-vim_api.nvim_set_keymap('n', '<leader>i', ':lua require("telescope.builtin").buffers({ignore_current_buffer=true})<CR>', {})
-vim_api.nvim_set_keymap('n', '<leader>?', ':lua require("telescope.builtin").help_tags()<CR>', {})
-vim_api.nvim_set_keymap('n', '<leader>c', ':lua require("telescope.builtin").tags()<CR>', {})
-vim_api.nvim_set_keymap('n', '<leader>C', ':lua require("telescope.builtin").current_buffer_tags()<CR>', {})
-vim_api.nvim_set_keymap('n', '<leader>r', ':lua require("telescope.builtin").grep_string()<CR>', {})
-vim_api.nvim_set_keymap('n', '<leader>R', ':lua require("telescope.builtin").live_grep()<CR>', {})
-vim_api.nvim_set_keymap('n', '<leader>x', ':lua require("telescope.builtin").commands()<CR>', {})
-vim_api.nvim_set_keymap('n', '<leader>h', ':lua require("telescope.builtin").command_history()<CR>', {})
-vim_api.nvim_set_keymap('n', '<leader>a', ':lua require("telescope.builtin").man_pages()<CR>', {})
-vim_api.nvim_set_keymap('n', '<leader>/', ':lua require("telescope.builtin").current_buffer_fuzzy_find()<CR>', {})
+vim.api.nvim_set_keymap('n', '<leader>o', ':lua require("telescope.builtin").find_files()<CR>', {})
+vim.api.nvim_set_keymap('n', '<leader>O', ':lua require("telescope.builtin").git_files()<CR>', {})
+vim.api.nvim_set_keymap('n', '<leader>i', ':lua require("telescope.builtin").buffers({ignore_current_buffer=true})<CR>', {})
+vim.api.nvim_set_keymap('n', '<leader>?', ':lua require("telescope.builtin").help_tags()<CR>', {})
+vim.api.nvim_set_keymap('n', '<leader>c', ':lua require("telescope.builtin").tags()<CR>', {})
+vim.api.nvim_set_keymap('n', '<leader>C', ':lua require("telescope.builtin").current_buffer_tags()<CR>', {})
+vim.api.nvim_set_keymap('n', '<leader>r', ':lua require("telescope.builtin").grep_string()<CR>', {})
+vim.api.nvim_set_keymap('n', '<leader>R', ':lua require("telescope.builtin").live_grep()<CR>', {})
+vim.api.nvim_set_keymap('n', '<leader>x', ':lua require("telescope.builtin").commands()<CR>', {})
+vim.api.nvim_set_keymap('n', '<leader>h', ':lua require("telescope.builtin").command_history()<CR>', {})
+vim.api.nvim_set_keymap('n', '<leader>a', ':lua require("telescope.builtin").man_pages()<CR>', {})
+vim.api.nvim_set_keymap('n', '<leader>/', ':lua require("telescope.builtin").current_buffer_fuzzy_find()<CR>', {})
 
 -- Git
-vim_api.nvim_set_keymap('n', '<leader>gs', ':Git<CR>', {})
-vim_api.nvim_set_keymap('n', '<leader>gc', ':Gvdiffsplit!<CR>', {})
-vim_api.nvim_set_keymap('n', '<leader>gr', ':diffget //3<CR>', {})
-vim_api.nvim_set_keymap('n', '<leader>gl', ':diffget //2<CR>', {})
+vim.api.nvim_set_keymap('n', '<leader>gs', ':Git<CR>', {})
+vim.api.nvim_set_keymap('n', '<leader>gc', ':Gvdiffsplit!<CR>', {})
+vim.api.nvim_set_keymap('n', '<leader>gr', ':diffget //3<CR>', {})
+vim.api.nvim_set_keymap('n', '<leader>gl', ':diffget //2<CR>', {})
 
 -- Make
-vim_api.nvim_set_keymap('n', '<leader>mm', ':make! ', {})
-vim_api.nvim_set_keymap('n', '<leader>mo', ':cw<CR>', {})
-vim_api.nvim_set_keymap('n', '<leader>mn', ':cnext<CR>', {})
-vim_api.nvim_set_keymap('n', '<leader>mN', ':cprev<CR>', {})
+vim.api.nvim_set_keymap('n', '<leader>mm', ':make! ', {})
+vim.api.nvim_set_keymap('n', '<leader>mo', ':cw<CR>', {})
+vim.api.nvim_set_keymap('n', '<leader>mn', ':cnext<CR>', {})
+vim.api.nvim_set_keymap('n', '<leader>mN', ':cprev<CR>', {})
 
 -- Spell-/Grammar-Checking
-vim_api.nvim_set_keymap('n', '<F2>', ':GrammarousCheck --lang=eng<CR>', {})
-vim_api.nvim_set_keymap('n', '<F3>', ':GrammarousCheck --lang=de<CR>', {})
-vim_api.nvim_set_keymap('n', '<F4>', ':GrammarousReset<CR>', {})
-vim_api.nvim_set_keymap('n', '<F5>', ':setlocal spell! spelllang=en_us<CR>', {})
-vim_api.nvim_set_keymap('n', '<F6>', ':setlocal spell! spelllang=de_de<CR>', {})
+vim.api.nvim_set_keymap('n', '<F2>', ':GrammarousCheck --lang=eng<CR>', {})
+vim.api.nvim_set_keymap('n', '<F3>', ':GrammarousCheck --lang=de<CR>', {})
+vim.api.nvim_set_keymap('n', '<F4>', ':GrammarousReset<CR>', {})
+vim.api.nvim_set_keymap('n', '<F5>', ':setlocal spell! spelllang=en_us<CR>', {})
+vim.api.nvim_set_keymap('n', '<F6>', ':setlocal spell! spelllang=de_de<CR>', {})
 
 -- LSP
-vim_api.nvim_set_keymap('n', '<leader>yh', ':lua vim.lsp.buf.hover()<CR>', {})
-vim_api.nvim_set_keymap('n', '<leader>yr', ':lua vim.lsp.buf.rename()<CR>', {})
-vim_api.nvim_set_keymap('n', '<leader>yf', ':lua vim.lsp.buf.range_formatting()<CR>', {})
-vim_api.nvim_set_keymap('n', '<leader>yF', ':lua vim.lsp.buf.formatting()<CR>', {})
+vim.api.nvim_set_keymap('n', '<leader>yh', ':lua vim.lsp.buf.hover()<CR>', {})
+vim.api.nvim_set_keymap('n', '<leader>yr', ':lua vim.lsp.buf.rename()<CR>', {})
+vim.api.nvim_set_keymap('n', '<leader>yf', ':lua vim.lsp.buf.range_formatting()<CR>', {})
+vim.api.nvim_set_keymap('n', '<leader>yF', ':lua vim.lsp.buf.formatting()<CR>', {})
 
-vim_api.nvim_set_keymap('n', '<leader>yn', ':lua vim.diagnostic.goto_next()<CR>', {})
-vim_api.nvim_set_keymap('n', '<leader>yN', ':lua vim.diagnostic.goto_prev()<CR>', {})
+vim.api.nvim_set_keymap('n', '<leader>yn', ':lua vim.diagnostic.goto_next()<CR>', {})
+vim.api.nvim_set_keymap('n', '<leader>yN', ':lua vim.diagnostic.goto_prev()<CR>', {})
 
-vim_api.nvim_set_keymap('n', '<leader>yc', ':lua require("telescope.builtin").lsp_references()<CR>', {})
-vim_api.nvim_set_keymap('n', '<leader>yt', ':lua require("telescope.builtin").lsp_type_definitions({jump_type="never"})<CR>', {})
-vim_api.nvim_set_keymap('n', '<leader>yi', ':lua require("telescope.builtin").lsp_implementations({jump_type="never"})<CR>', {})
-vim_api.nvim_set_keymap('n', '<leader>yd', ':lua require("telescope.builtin").lsp_definitions({jump_type="never"})<CR>', {})
-vim_api.nvim_set_keymap('n', '<leader>ya', ':lua require("telescope.builtin").lsp_code_actions()<CR>', {})
-vim_api.nvim_set_keymap('n', '<leader>yA', ':lua require("telescope.builtin").lsp_range_code_actions()<CR>', {})
-vim_api.nvim_set_keymap('n', '<leader>ys', ':lua require("telescope.builtin").lsp_document_symbols()<CR>', {})
-vim_api.nvim_set_keymap('n', '<leader>yS', ':lua require("telescope.builtin").lsp_workspace_symbols()<CR>', {})
-vim_api.nvim_set_keymap('n', '<leader>yg', ':lua require("telescope.builtin").diagnostics({bufnr=0})<CR>', {})
-vim_api.nvim_set_keymap('n', '<leader>yG', ':lua require("telescope.builtin").diagnostics()<CR>', {})
+vim.api.nvim_set_keymap('n', '<leader>yc', ':lua require("telescope.builtin").lsp_references()<CR>', {})
+vim.api.nvim_set_keymap('n', '<leader>yt', ':lua require("telescope.builtin").lsp_type_definitions({jump_type="never"})<CR>', {})
+vim.api.nvim_set_keymap('n', '<leader>yi', ':lua require("telescope.builtin").lsp_implementations({jump_type="never"})<CR>', {})
+vim.api.nvim_set_keymap('n', '<leader>yd', ':lua require("telescope.builtin").lsp_definitions({jump_type="never"})<CR>', {})
+vim.api.nvim_set_keymap('n', '<leader>ya', ':lua require("telescope.builtin").lsp_code_actions()<CR>', {})
+vim.api.nvim_set_keymap('n', '<leader>yA', ':lua require("telescope.builtin").lsp_range_code_actions()<CR>', {})
+vim.api.nvim_set_keymap('n', '<leader>ys', ':lua require("telescope.builtin").lsp_document_symbols()<CR>', {})
+vim.api.nvim_set_keymap('n', '<leader>yS', ':lua require("telescope.builtin").lsp_workspace_symbols()<CR>', {})
+vim.api.nvim_set_keymap('n', '<leader>yg', ':lua require("telescope.builtin").diagnostics({bufnr=0})<CR>', {})
+vim.api.nvim_set_keymap('n', '<leader>yG', ':lua require("telescope.builtin").diagnostics()<CR>', {})
 
 -- Clear search
-vim_api.nvim_set_keymap('n', '<F7>', ':noh<CR>', {noremap = true})
+vim.api.nvim_set_keymap('n', '<F7>', ':noh<CR>', {noremap = true})
 
 -- Highlight trailing whitespaces
-vim_api.nvim_set_keymap('n', '<F8>', ':ToggleWhitespace<CR>', {noremap = true})
+vim.api.nvim_set_keymap('n', '<F8>', ':ToggleWhitespace<CR>', {noremap = true})
 
 -- nvim-hlslens
-vim.cmd([[
-noremap <silent> n <Cmd>execute('normal! ' . v:count1 . 'n')<CR>
-            \<Cmd>lua require('hlslens').start()<CR>
-noremap <silent> N <Cmd>execute('normal! ' . v:count1 . 'N')<CR>
-            \<Cmd>lua require('hlslens').start()<CR>
-noremap * *<Cmd>lua require('hlslens').start()<CR>
-noremap # #<Cmd>lua require('hlslens').start()<CR>
-noremap g* g*<Cmd>lua require('hlslens').start()<CR>
-noremap g# g#<Cmd>lua require('hlslens').start()<CR>
-]])
+vim.api.nvim_set_keymap('n', 'n', [[<Cmd>execute('normal! ' . v:count1 . 'n')<CR><Cmd>lua require('hlslens').start()<CR>]], {noremap = true, silent = true})
+vim.api.nvim_set_keymap('n', 'N', [[<Cmd>execute('normal! ' . v:count1 . 'N')<CR><Cmd>lua require('hlslens').start()<CR>]], {noremap = true, silent = true})
+vim.api.nvim_set_keymap('n', '*', [[*<Cmd>lua require('hlslens').start()<CR>]], {noremap = true, silent = true})
+vim.api.nvim_set_keymap('n', '#', [[#<Cmd>lua require('hlslens').start()<CR>]], {noremap = true, silent = true})
+vim.api.nvim_set_keymap('n', 'g*', [[g*<Cmd>lua require('hlslens').start()<CR>]], {noremap = true, silent = true})
+vim.api.nvim_set_keymap('n', 'g#', [[g#<Cmd>lua require('hlslens').start()<CR>]], {noremap = true, silent = true})
+vim.api.nvim_set_keymap('n', '<Leader>l', ':noh<CR>', {noremap = true, silent = true})
 
 --------------
 -- Autocmds --
 --------------
 
-vim_cmd([[
+vim.cmd([[
 	au FileType gitcommit set tw=72
 	au FileType python    set expandtab
 	au FileType tex       set expandtab
