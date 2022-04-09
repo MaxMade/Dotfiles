@@ -512,6 +512,7 @@ vim.api.nvim_set_keymap("s", "<C-k>", '<cmd>lua require("luasnip").jump(-1)<CR>'
 --------------
 
 vim.cmd([[
+	au FileType mail      set tw=72
 	au FileType gitcommit set tw=72
 	au FileType python    set expandtab
 	au FileType tex       set expandtab
