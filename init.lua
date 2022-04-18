@@ -151,7 +151,12 @@ vim.opt.swapfile = false
 vim.opt.autoindent = true
 vim.opt.showmatch = true
 vim.opt.encoding = 'utf-8'
-vim.opt.listchars = {tab = '‣\t', trail = '␣', space = '␣', precedes = '⇤', extends = '⇥', eol = '↲'}
+vim.opt.listchars.tab = '‣\t'
+vim.opt.listchars.trail = '␣'
+vim.opt.listchars.space = '␣'
+vim.opt.listchars.precedes = '⇤'
+vim.opt.listchars.extends = '⇥'
+vim.opt.listchars.eol = '↲'
 vim.opt.wrap = false
 vim.opt.colorcolumn = '80'
 vim.opt.laststatus = 2
