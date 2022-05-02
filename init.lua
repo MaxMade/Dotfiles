@@ -476,6 +476,8 @@ vim.keymap.set("n", "<leader>yh", function() vim.lsp.buf.hover() end)
 vim.keymap.set("n", "<leader>yr", function() vim.lsp.buf.rename() end)
 vim.keymap.set("n", "<leader>yf", function() vim.lsp.buf.range_formatting() end)
 vim.keymap.set("n", "<leader>yF", function() vim.lsp.buf.formatting() end)
+vim.keymap.set("n", "<leader>ya", function() vim.lsp.buf.code_action() end) -- TODO: May re-integrate with Telescope
+vim.keymap.set("n", "<leader>yA", function() vim.lsp.buf.range_code_action() end) -- TODO: May re-integrate with Telescope
 
 vim.keymap.set("n", "<leader>yn", function() vim.diagnostic.goto_next() end)
 vim.keymap.set("n", "<leader>yN", function() vim.diagnostic.goto_prev() end)
@@ -484,8 +486,6 @@ vim.keymap.set("n", "<leader>yc", function() require("telescope.builtin").lsp_re
 vim.keymap.set("n", "<leader>yt", function() require("telescope.builtin").lsp_type_definitions({jump_type="never"}) end)
 vim.keymap.set("n", "<leader>yi", function() require("telescope.builtin").lsp_implementations({jump_type="never"}) end)
 vim.keymap.set("n", "<leader>yd", function() require("telescope.builtin").lsp_definitions({jump_type="never"}) end)
-vim.keymap.set("n", "<leader>ya", function() require("telescope.builtin").lsp_code_actions() end)
-vim.keymap.set("n", "<leader>yA", function() require("telescope.builtin").lsp_range_code_actions() end)
 vim.keymap.set("n", "<leader>ys", function() require("telescope.builtin").lsp_document_symbols() end)
 vim.keymap.set("n", "<leader>yS", function() require("telescope.builtin").lsp_workspace_symbols() end)
 vim.keymap.set("n", "<leader>yg", function() require("telescope.builtin").diagnostics({bufnr=0}) end)
