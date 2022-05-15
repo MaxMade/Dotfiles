@@ -523,7 +523,7 @@ vim.keymap.set("i", "<C-k>", function() require("luasnip").jump(-1) end)
 vim.keymap.set("s", "<C-k>", function() require("luasnip").jump(-1) end)
 
 -- neogen
-vim.keymap.set("n", "<Leader>ng", function() require("neogen").generate() end)
+vim.keymap.set("n", "<Leader>d", function() require("neogen").generate() end)
 
 --------------
 -- Autocmds --
