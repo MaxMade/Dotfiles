@@ -70,6 +70,11 @@ require('packer').startup(function(use)
 	use({'lewis6991/gitsigns.nvim'})
 
 	use({'lewis6991/spellsitter.nvim'})
+
+	use({
+		'danymat/neogen',
+		requires = 'nvim-treesitter/nvim-treesitter',
+	})
 end)
 
 ---------------
@@ -78,6 +83,7 @@ end)
 
 local cmp = require('cmp')
 local neorg = require('neorg')
+local neogen = require('neogen')
 local lualine = require('lualine')
 local lspconfig = require('lspconfig')
 local lspconfig_config = require('lspconfig/configs')
@@ -399,6 +405,9 @@ spellsitter.setup({})
 -- todo-comments
 todo_comments.setup({})
 
+-- neogen
+neogen.setup({snippet_engine = "luasnip"})
+
 ------------------
 -- Key Mappings --
 ------------------
@@ -512,6 +521,9 @@ vim.keymap.set("i", "<C-j>", function() require("luasnip").jump(1) end)
 vim.keymap.set("s", "<C-j>", function() require("luasnip").jump(1) end)
 vim.keymap.set("i", "<C-k>", function() require("luasnip").jump(-1) end)
 vim.keymap.set("s", "<C-k>", function() require("luasnip").jump(-1) end)
+
+-- neogen
+vim.keymap.set("n", "<Leader>ng", function() require("neogen").generate() end)
 
 --------------
 -- Autocmds --
