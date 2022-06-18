@@ -460,6 +460,7 @@ vim.keymap.set("n", "<leader>x", function() require("telescope.builtin").command
 vim.keymap.set("n", "<leader>h", function() require("telescope.builtin").command_history() end)
 vim.keymap.set("n", "<leader>a", function() require("telescope.builtin").man_pages() end)
 vim.keymap.set("n", "<leader>/", function() require("telescope.builtin").current_buffer_fuzzy_find() end)
+vim.keymap.set("n", "<leader>g", function() require("telescope.builtin").registers() end)
 
 -- Git
 vim.api.nvim_set_keymap('n', '<leader>gs', ':Git<CR>', {})
