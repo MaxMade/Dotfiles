@@ -22,4 +22,4 @@ add-auto-load-safe-path /usr/lib/go/src/runtime/runtime-gdb.py
 #################
 
 source /usr/share/gdb-dashboard/.gdbinit
-dashboard -layout source assembly variables
+dashboard -layout source assembly expressions history stack variables
