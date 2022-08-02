@@ -111,6 +111,9 @@ if [[ -f $PATH_SUBSTRING/zsh-history-substring-search.zsh ]]; then
 
 	HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND=none
 	HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_NOT_FOUND=none
+else
+	bindkey "${key[Ctrl-k]}" history-search-backward
+	bindkey "${key[Ctrl-j]}" history-search-forward
 fi
 
 #############
