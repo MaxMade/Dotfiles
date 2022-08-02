@@ -465,7 +465,7 @@ vim.keymap.set("n", "<leader>r", function() require("telescope.builtin").grep_st
 vim.keymap.set("n", "<leader>R", function() require("telescope.builtin").live_grep() end)
 vim.keymap.set("n", "<leader>x", function() require("telescope.builtin").commands() end)
 vim.keymap.set("n", "<leader>h", function() require("telescope.builtin").command_history() end)
-vim.keymap.set("n", "<leader>a", function() require("telescope.builtin").man_pages() end)
+vim.keymap.set("n", "<leader>a", function() require("telescope.builtin").man_pages({sections={"ALL"}}) end)
 vim.keymap.set("n", "<leader>/", function() require("telescope.builtin").current_buffer_fuzzy_find() end)
 vim.keymap.set("n", "<leader>g", function() require("telescope.builtin").registers() end)
 
