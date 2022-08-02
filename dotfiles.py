@@ -21,7 +21,7 @@ dotfiles['tmux.conf'] = home + '/.tmux.conf'
 dotfiles['init.lua'] = home + '/.config/nvim/init.lua'
 dotfiles['zshrc'] = home + '/.zshrc'
 dotfiles['alacritty.yml'] = home + '/.alacritty.yml'
-dotfiles['kitty.conf'] = home + '/.config/kitty.conf'
+dotfiles['kitty.conf'] = home + '/.config/kitty/kitty.conf'
 
 
 def main() -> int:
