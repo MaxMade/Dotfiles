@@ -1,0 +1,229 @@
+###################
+# Key Definitions #
+###################
+
+typeset -g -A key
+key[Backspace]="^?"
+key[Delete]="^[[3~"
+key[Ctrl-Space]="^@"
+key[Ctrl-k]="^K"
+key[Ctrl-j]="^J"
+
+###########
+# Exports #
+###########
+
+export MANPAGER="vim -M +MANPAGER -"
+
+####################
+# Generic settings #
+####################
+
+setopt extendedglob
+
+##############
+# Keybinding #
+##############
+
+# Use vi Mode
+bindkey -v
+set -o vi
+
+# Delete
+bindkey -M vicmd -- "${key[Delete]}" delete-char
+bindkey -M viins -- "${key[Delete]}" delete-char
+
+# Backspace
+bindkey -M vicmd -- "${key[Backspace]}" backward-delete-char
+bindkey -M viins -- "${key[Backspace]}" backward-delete-char
+
+export KEYTIMEOUT=1
+
+autoload edit-command-line
+zle -N edit-command-line
+bindkey -M vicmd n edit-command-line
+
+################
+# History file #
+################
+
+HISTFILE=~/.zsh_history
+setopt hist_ignore_all_dups
+setopt appendhistory
+setopt incappendhistory
+setopt histignorespace
+HISTSIZE=10000
+SAVEHIST=10000
+
+#########
+# Alias #
+#########
+
+alias ls="ls --color=auto --human-readable"
+alias sl="ls --color=auto --human-readable"
+alias la="ls --color=auto --human-readable -la"
+alias ..="cd .."
+alias less="less -r"
+
+##################
+# Tab Completion #
+##################
+
+autoload -Uz compinit
+compinit
+
+zstyle ":completion:*" menu select
+zmodload zsh/complist
+bindkey -M menuselect "h" vi-backward-char
+bindkey -M menuselect "k" vi-up-line-or-history
+bindkey -M menuselect "l" vi-forward-char
+bindkey -M menuselect "j" vi-down-line-or-history
+
+###########
+# Plugins #
+###########
+
+# fzf
+for PATH_FZF in "/usr/share/fzf/" "/usr/share/doc/fzf/examples/"
+do
+    if [[ -f $PATH_FZF/key-bindings.zsh ]]; then
+        source $PATH_FZF/key-bindings.zsh
+    fi
+done
+
+# Command not found hook
+PATH_COMMAND="/usr/share/doc/pkgfile/"
+if [[ -f $PATH_COMMAND/command-not-found.zsh ]]; then
+    source $PATH_COMMAND/command-not-found.zsh
+fi
+
+# Syntax highlighting
+for PATH_SYNTAX in "/usr/share/zsh/plugins/zsh-syntax-highlighting/" "/usr/share/zsh-syntax-highlighting/"
+do
+    if [[ -f $PATH_SYNTAX/zsh-syntax-highlighting.zsh ]]; then
+        source $PATH_SYNTAX/zsh-syntax-highlighting.zsh
+    fi
+done
+
+# Autosuggestions
+for PATH_AUTOSUGGEST in "/usr/share/zsh/plugins/zsh-autosuggestions/" "/usr/share/zsh-autosuggestions/"
+do
+    if [[ -f $PATH_AUTOSUGGEST/zsh-autosuggestions.zsh ]]; then
+        source $PATH_AUTOSUGGEST/zsh-autosuggestions.zsh
+
+        bindkey -M vicmd -- "${key[Ctrl-Space]}" autosuggest-execute
+        bindkey -M viins -- "${key[Ctrl-Space]}" autosuggest-execute
+
+        ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#666666"
+    fi
+done
+
+# Substring cmd completion
+for PATH_SUBSTRING in "/usr/share/zsh/plugins/zsh-history-substring-search/" "/usr/share/zsh-autosuggestions"
+do
+    if [[ -f $PATH_SUBSTRING/zsh-history-substring-search.zsh ]]; then
+        source $PATH_SUBSTRING/zsh-history-substring-search.zsh
+
+        bindkey -M vicmd "k" history-substring-search-up
+        bindkey -M vicmd "j" history-substring-search-down
+
+        bindkey -M viins -- "${key[Ctrl-k]}" history-substring-search-up
+        bindkey -M vicmd -- "${key[Ctrl-k]}" history-substring-search-up
+        bindkey -M viins -- "${key[Ctrl-j]}" history-substring-search-down
+        bindkey -M vicmd -- "${key[Ctrl-j]}" history-substring-search-down
+
+        HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND=none
+        HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_NOT_FOUND=none
+    else
+        bindkey -M vicmd "k" history-substring-search-up
+        bindkey -M vicmd "j" history-substring-search-down
+
+        bindkey "${key[Ctrl-k]}" history-search-backward
+        bindkey "${key[Ctrl-j]}" history-search-forward
+    fi
+done
+
+#############
+# Functions #
+#############
+
+git() {
+    if [ "$@[1]" = "graph" ]; then
+        tig --all
+    else
+        command git "$@"
+    fi
+}
+
+cheat() {
+    curl -s cht.sh/"$@" | less
+}
+
+##########
+# Prompt #
+##########
+
+autoload -U colors zsh/terminfo
+autoload -Uz vcs_info
+
+# autoload -U colors && colors
+zstyle ":vcs_info:*" check-for-changes true
+zstyle ":vcs_info:*" stagedstr "!"
+zstyle ":vcs_info:*" unstagedstr "+"
+
+# Information about branch, staged and changed files
+setopt prompt_subst
+zstyle ":vcs_info:*" enable git svn
+zstyle ":vcs_info:*" formats "%F{yellow}(%b%u%c)%f "
+
+## Update each time new prompt is rendered
+precmd () {
+    vcs_info
+}
+
+# Set the actual prompt as following (hostname underlined if ssh):
+# user@hostname ~ echo 42            [0]
+setprompt() {
+
+# user@
+PS1="%F{green}%n%f%F{blue}@%f"
+
+# hostname (underlinded if ssh)
+if [ -z "$SSH_TTY" ]; then
+    PS1="$PS1%F{green}%M%f"
+else
+    PS1="$PS1%F{green}%U%M%u%f"
+fi
+# ~
+PS1="$PS1 %F{blue}%2~%f "
+
+# VCS information
+PS1="$PS1\$vcs_info_msg_0_%F{green}$%f "
+
+# Exit status of last command
+RPS1="[%(?.%F{green}%?%f.%F{red}%?%f)]"
+}
+setprompt
+
+################
+# Cursor Shape #
+################
+
+zle -N zle-line-init
+zle -N zle-keymap-select
+function zle-line-init zle-keymap-select {
+    if [[ "$KEYMAP" = "vicmd" ]]; then
+        echo -ne "\e[1 q"
+    else
+        echo -ne "\e[5 q"
+    fi
+}
+
+###################
+# SSH Agent (GPG) #
+###################
+
+unset SSH_AGENT_PID
+if [ "${gnupg_SSH_AUTH_SOCK_by:-0}" -ne $$ ]; then
+    export SSH_AUTH_SOCK="$(gpgconf --list-dirs agent-ssh-socket)"
+fi
