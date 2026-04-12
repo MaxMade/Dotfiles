@@ -1,0 +1,7 @@
+#!/bin/env bash
+# hash: {{ include "dot_tmux.conf" | sha256sum }}
+
+echo -e "\e[32mReloading tmux configuration...\e[0m"
+if tmux list-sessions > /dev/null 2>&1; then
+    tmux source-file ~/.tmux.conf
+fi
