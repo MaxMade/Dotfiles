@@ -1,0 +1,20 @@
+dictionaries = [
+    "en_us",
+    "en_gb",
+    "de",
+]
+
+words = []
+
+flag_words = ["todo", "fixme"]
+
+ignore_paths = [
+    "target/**/*",
+    ".git/**/*",
+]
+
+ignore_patterns = [
+    'https?://[^\s]+',
+]
+
+include_tags = ["comment", "string"]
