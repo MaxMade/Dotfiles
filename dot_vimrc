@@ -1,0 +1,160 @@
+"""""""""""""""""
+" General UI/UX "
+"""""""""""""""""
+
+colorscheme gruvbox
+set background=dark
+
+syntax enable
+filetype plugin indent on
+
+set number
+set relativenumber
+set colorcolumn=80
+set cursorline
+set showmatch
+set wildmenu
+set wildmode=longest:full,full
+
+set termguicolors
+set laststatus=2
+
+set signcolumn=yes
+set nocompatible
+
+"""""""""""""
+" Searching "
+"""""""""""""
+
+set incsearch
+set hlsearch
+set ignorecase
+set smartcase
+
+""""""""""
+" Splits "
+""""""""""
+
+set splitright
+set splitbelow
+
+""""""""""""""""""""
+" Editing behavior "
+""""""""""""""""""""
+
+set encoding=utf-8
+
+set nowrap
+
+set autoindent
+set smartindent
+
+set expandtab
+set tabstop=4
+set shiftwidth=4
+set softtabstop=4
+
+"""""""""""""""""""
+" Files / buffers "
+"""""""""""""""""""
+
+set hidden
+set updatetime=300
+
+set noswapfile
+set nobackup
+set nowritebackup
+
+"""""""""""""
+" Clipboard "
+"""""""""""""
+
+if has('clipboard')
+  set clipboard=unnamedplus
+endif
+
+"""""""""""""""""
+" UI characters "
+"""""""""""""""""
+
+set listchars=tab:‣\ ,trail:␣,space:␣,precedes:⇤,extends:⇥,eol:↲
+set fillchars=vert:│
+
+" Cursor Option
+let &t_SI = "\<Esc>[6 q"
+let &t_SR = "\<Esc>[4 q"
+let &t_EI = "\<Esc>[2 q"
+
+""""""""""""""""""""""""""
+" Performance / behavior "
+""""""""""""""""""""""""""
+
+set timeoutlen=500
+set ttimeoutlen=50
+
+""""""""""""""
+" Completion "
+""""""""""""""
+
+set completeopt=menu,menuone,noselect
+
+""""""""""""""
+" Leader key "
+""""""""""""""
+
+let mapleader=" "
+
+""""""""""""""""
+" Key mappings "
+""""""""""""""""
+
+" Undo, Redo
+nnoremap u :undo<CR>
+nnoremap U :redo<CR>
+
+" Yank
+nnoremap Y y$
+
+" Delete Line
+nnoremap m "_d
+vnoremap m "_d
+
+nnoremap mm "_dd
+vnoremap MM "_dd
+
+nnoremap M "_D
+nnoremap M "_D
+
+nnoremap c "_c
+
+nnoremap x "_x
+vnoremap x "_x
+
+" Suspend
+nnoremap <c-z> :sus<CR>
+vnoremap <c-z> :sus<CR>
+inoremap <c-z> :sus<CR>
+
+" Iterate through Command History
+cnoremap <c-k> <UP>
+cnoremap <c-j> <DOWN>
+
+" Show hidden Characters
+nnoremap <leader>q :set list! list?<CR>
+
+" Spell Checking
+nnoremap <F5>, :setlocal spell! spelllang=en_us<CR>
+nnoremap <F6>, :setlocal spell! spelllang=de_de<CR>
+
+" Clear Search Hightligh
+nnoremap <F7> :noh<CR>
+
+"""""""""""""""""""
+" Filetype tweaks "
+"""""""""""""""""""
+
+" Git commit line length
+augroup gitcommit
+  autocmd!
+  autocmd FileType gitcommit setlocal textwidth=72
+augroup END
