@@ -1,0 +1,262 @@
+############
+# Variable #
+############
+
+set $color_green      #b8bb26
+set $color_blue       #83a598
+set $color_purple     #d3869b
+set $color_red        #fb4934
+set $color_gray       #928374
+set $color_fg         #ebdbb2
+set $color_background #282828
+
+set $font Source Code Pro Semibold 8
+
+############
+# Commands #
+############
+
+set $cmd_lock swaylock -c 1f1f1f -l -e -F
+
+set $cmd_rofi rofi -i -matching 'fuzzy' \
+	-sort -sorting-method 'fzf' \
+	-font "$font" \
+	-kb-accept-entry 'Control+m,Return,KP_Enter' \
+	-kb-remove-to-eol 'Control+Delete' \
+	-kb-move-char-forward 'Right' \
+	-kb-element-next 'Control+j' \
+	-kb-element-prev 'Control+k' \
+	-kb-page-next 'Control+f' \
+	-kb-page-prev'Control+b' \
+
+##########
+# Keymap #
+##########
+
+input * {
+    xkb_layout "us"
+    xkb_variant "altgr-intl"
+    xkb_options "caps:escape,eurosign:e"
+}
+
+###################
+# Standart Config #
+###################
+
+# Set modifier
+set $mod Mod4
+floating_modifier $mod
+
+# Set font
+font pango: $font
+
+# No mouse!
+focus_follows_mouse no
+focus_on_window_activation focus
+
+# Start a terminal
+bindsym $mod+Return exec alacritty
+
+# Kill focused window
+bindsym $mod+Shift+q kill
+
+# Move between windows
+bindsym $mod+j focus down
+bindsym $mod+k focus up
+bindsym $mod+l focus right
+bindsym $mod+h focus left
+
+# Move windows
+bindsym $mod+Shift+j move down
+bindsym $mod+Shift+k move up
+bindsym $mod+Shift+l move right
+bindsym $mod+Shift+h move left
+
+# Alternatively, use the cursor keys
+bindsym $mod+Left focus left
+bindsym $mod+Down focus down
+bindsym $mod+Up focus up
+bindsym $mod+Right focus right
+
+# alternatively, use the cursor keys
+bindsym $mod+Shift+Left move left
+bindsym $mod+Shift+Down move down
+bindsym $mod+Shift+Up move up
+bindsym $mod+Shift+Right move right
+
+# Split in horizontal orientation
+bindsym $mod+y split h
+
+# Split in vertical orientation
+bindsym $mod+x split v
+
+# Enter fullscreen mode for the focused container
+bindsym $mod+f fullscreen toggle
+
+# Change container layout (stacked, tabbed, toggle split)
+bindsym $mod+s layout stacking
+bindsym $mod+w layout tabbed
+bindsym $mod+e layout toggle split
+
+# Toggle tiling / floating
+bindsym $mod+Shift+space floating toggle
+
+# Change focus between tiling / floating windows
+bindsym $mod+space focus mode_toggle
+
+# Focus the parent container
+bindsym $mod+a focus parent
+
+# Focus the child container
+bindsym $mod+Shift+a focus child
+
+# Switch to workspace
+bindsym $mod+1 workspace 1
+bindsym $mod+2 workspace 2
+bindsym $mod+3 workspace 3
+bindsym $mod+4 workspace 4
+bindsym $mod+5 workspace 5
+bindsym $mod+6 workspace 6
+bindsym $mod+7 workspace 7
+bindsym $mod+8 workspace 8
+bindsym $mod+9 workspace 9
+bindsym $mod+0 workspace 10
+
+# Move focused container to workspace
+bindsym $mod+Shift+1 move container to workspace 1
+bindsym $mod+Shift+2 move container to workspace 2
+bindsym $mod+Shift+3 move container to workspace 3
+bindsym $mod+Shift+4 move container to workspace 4
+bindsym $mod+Shift+5 move container to workspace 5
+bindsym $mod+Shift+6 move container to workspace 6
+bindsym $mod+Shift+7 move container to workspace 7
+bindsym $mod+Shift+8 move container to workspace 8
+bindsym $mod+Shift+9 move container to workspace 9
+bindsym $mod+Shift+0 move container to workspace 10
+
+# Move workspace to another monitor
+bindsym $mod+Mod1+Left move workspace to output left
+bindsym $mod+Mod1+Right move workspace to output right
+bindsym $mod+Mod1+l move workspace to output right
+bindsym $mod+Mod1+h move workspace to output left
+
+# Reload the configuration file
+bindsym $mod+Shift+c reload
+
+# Exit sway
+bindsym $mod+Shift+e exec \
+	swaynag -f "$font" \
+	-t warning -m "You pressed the exit shortcut. Do you really want to exit sway?" \
+	-B "Exit sway" "swaymsg exit" \
+	-B "Poweroff" "poweroff" \
+	-B "Reboot" "reboot" \
+	-Z "Suspend" "systemctl suspend" \
+	-Z "Lock Screen" "$cmd_lock"
+
+# Resize window
+mode "resize" {
+        bindsym h resize shrink width 10 px or 10 ppt
+        bindsym j resize grow height 10 px or 10 ppt
+        bindsym k resize shrink height 10 px or 10 ppt
+        bindsym l resize grow width 10 px or 10 ppt
+
+        # same bindings, but for the arrow keys
+        bindsym Left resize shrink width 10 px or 10 ppt
+        bindsym Down resize grow height 10 px or 10 ppt
+        bindsym Up resize shrink height 10 px or 10 ppt
+        bindsym Right resize grow width 10 px or 10 ppt
+
+        # back to normal: Enter or Escape
+        bindsym Return mode "default"
+        bindsym Escape mode "default"
+}
+
+bindsym $mod+r mode "resize"
+bindsym $mod+Shift+r exec shikanectl reload
+
+set $bar_background $bg
+set $bar_foreground $color_fg
+set $bar_foreground-alt $color_gray
+set $bar_foreground-vis $color_fg
+set $bar_alert $color_red
+bar {
+	swaybar_command --no-startup-id waybar
+	workspace_buttons yes
+}
+
+
+##################
+### own config ###
+##################
+
+# Disable titlebar
+default_border pixel 3
+default_floating_border pixel 3
+
+# Window Border           <border>           <background>        <text>            <indicator>
+client.focused            $color_green       $color_green       $color_background  $color_blue
+client.urgent             $color_red         $color_red         $color_background  $color_blue
+client.focused_inactive   $color_gray        $color_gray        $color_fg          $color_blue
+client.focused_tab_title  $color_gray        $color_gray        $color_fg          $color_blue
+client.unfocused          $color_background  $color_background  $color_fg          $color_background
+
+# Enable popup during fullscreen
+popup_during_fullscreen smart
+
+# Cycle through workspaces
+bindsym $mod+Tab workspace next
+bindsym $mod+Shift+Tab workspace prev
+
+# Jump to urgent window
+bindsym $mod+u [urgent=latest] focus
+
+# Force border
+for_window [window_role="pop-up"] floating enable
+for_window [window_role="bubble"] floating enable
+for_window [window_role="task_dialog"] floating enable
+for_window [window_role="Preferences"] floating enable
+for_window [app_id="firefox" title="Firefox — Sharing Indicator"] floating enable
+
+no_focus [window_role="pop-up"]
+
+# Start application launcher
+bindsym $mod+d exec $cmd_rofi -show run
+
+# Configure volume control
+bindsym XF86AudioRaiseVolume exec pactl set-sink-volume @DEFAULT_SINK@ +5%
+bindsym XF86AudioLowerVolume exec pactl set-sink-volume @DEFAULT_SINK@ -5%
+bindsym XF86AudioMute exec pactl set-sink-mute @DEFAULT_SINK@ toggle
+
+bindsym XF86AudioMicMute exec pactl set-source-volume @DEFAULT_SOURCE@ -5%
+bindsym XF86TouchpadToggle exec pactl set-source-volume @DEFAULT_SOURCE@ +5%
+bindsym XF86TouchpadOn exec pactl set-source-mute @DEFAULT_SOURCE@ toggle
+
+bindsym XF86AudioPlay exec playerctl play-pause
+bindsym XF86AudioPrev exec playerctl previous
+bindsym XF86AudioNext exec playerctl next
+exec --no-startup-id pamixer --default-source -m
+
+# Configure brightnessctl control
+bindsym XF86MonBrightnessDown exec brightnessctl set 5%-
+bindsym XF86MonBrightnessUp exec brightnessctl set 5%+
+
+# Set background
+output * bg #1f1f1f solid_color
+
+# Open notification center
+exec swaync
+bindsym Mod1+space exec swaync-client -t -sw
+
+# Start clipboard
+exec wl-paste -t text --watch clipman store --no-persist
+
+# Start screen lock
+exec swayidle -w \
+       timeout 1800 "$cmd_lock" \
+       timeout 1805 'swaymsg "output * dpms off"' \
+       resume 'swaymsg "output * dpms on"' \
+       before-sleep "$cmd_lock -d"
+       
+# Include common configuration
+include /etc/sway/config.d/*
+include $HOME/.config/sway/config.d/*
