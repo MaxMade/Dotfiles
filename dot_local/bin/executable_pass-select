@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+copy=false
+
+# Parse args
+args=()
+for arg in "$@"; do
+    case "$arg" in
+        -c|--copy)
+            copy=true
+            ;;
+        *)
+            args+=("$arg")
+            ;;
+    esac
+done
+
+if [ "${#args[@]}" -eq 0 ]; then
+    echo "Usage: $0 [-c|--copy] DIR [DIR...]"
+    exit 1
+fi
+
+files=()
+
+for arg in "${args[@]}"; do
+    if [ -d "$arg" ]; then
+        while IFS= read -r -d '' file; do
+            files+=("$file")
+        done < <(find -L "$arg" -type f -name '*.gpg' -print0)
+    elif [ -f "$arg" ] && [[ "$arg" == *.gpg ]]; then
+        files+=("$arg")
+    fi
+done
+
+[ "${#files[@]}" -eq 0 ] && { echo "No .gpg files found."; exit 1; }
+
+selection=$(printf '%s\n' "${files[@]}" | rofi -dmenu -i -p "Select password")
+[ -z "$selection" ] && exit 0
+
+# Decrypt once
+output=$(gpg -d "$selection" 2>/dev/null)
+
+# Process
+if printf '%s\n' "$output" | grep -qi 'password:'; then
+    result=$(printf '%s\n' "$output" \
+        | grep -i 'password:' \
+        | sed -E 's/^password://I')
+else
+    result=$(printf '%s\n' "$output" | head -n 1)
+fi
+
+# Output to stdout
+printf '%s\n' "$result"
+
+# Copy if requested
+if [ "$copy" = true ]; then
+    if command -v wl-copy >/dev/null 2>&1; then
+        printf '%s' "$result" | wl-copy
+    elif command -v xclip >/dev/null 2>&1; then
+        printf '%s' "$result" | xclip -selection clipboard
+    elif command -v xsel >/dev/null 2>&1; then
+        printf '%s' "$result" | xsel --clipboard --input
+    else
+        echo "No clipboard tool found (wl-copy, xclip, xsel)." >&2
+        exit 1
+    fi
+fi
