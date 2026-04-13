@@ -16,7 +16,16 @@
 {{- end -}}
 {{- $wNetworkInterface := promptStringOnce . "wNetworkInterface" "Default wireless network interface" $wNetworkInterfaceAuto -}}
 
+{{- $waylandAuto := output "sh" "-c" "echo $WAYLAND_DISPLAY" | trim -}}
+{{- if $waylandAuto -}}
+  {{- $waylandAuto = true -}}
+{{- else -}}
+  {{- $waylandAuto = false -}}
+{{- end -}}
+{{- $wayland := promptBoolOnce . "wayland" "Wayland session (empty means X11)" $waylandAuto -}}
+
 [data]
     hasBattery = {{ $hasBattery }}
     eNetworkInterface = {{ $eNetworkInterface | quote }}
     wNetworkInterface = {{ $wNetworkInterface | quote }}
+    wayland = {{ $wayland }}
