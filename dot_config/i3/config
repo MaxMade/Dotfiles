@@ -1,0 +1,215 @@
+############
+# Variable #
+############
+set $normal #b8bb26
+set $urgent #fb4934
+
+set $background #111111
+
+###################
+# Standart Config #
+###################
+
+set $mod Mod4
+
+font pango: Dejavu Sans Mono Bold 7
+focus_follows_mouse no
+
+# Use Mouse+$mod to drag floating windows to their wanted position
+floating_modifier $mod
+
+# start a terminal
+bindsym $mod+Return exec alacritty
+
+# kill focused window
+bindsym $mod+Shift+q kill
+
+# alternatively, you can use the cursor keys:
+bindsym $mod+Left focus left
+bindsym $mod+Down focus down
+bindsym $mod+Up focus up
+bindsym $mod+Right focus right
+
+bindsym $mod+j focus down
+bindsym $mod+k focus up
+bindsym $mod+l focus right
+bindsym $mod+h focus left
+
+# alternatively, you can use the cursor keys:
+bindsym $mod+Shift+Left move left
+bindsym $mod+Shift+Down move down
+bindsym $mod+Shift+Up move up
+bindsym $mod+Shift+Right move right
+
+bindsym $mod+Shift+j move down
+bindsym $mod+Shift+k move up
+bindsym $mod+Shift+l move right
+bindsym $mod+Shift+h move left
+
+
+# split in horizontal orientation
+bindsym $mod+y split h
+
+# split in vertical orientation
+bindsym $mod+x split v
+
+# enter fullscreen mode for the focused container
+bindsym $mod+f fullscreen toggle
+
+# change container layout (stacked, tabbed, toggle split)
+bindsym $mod+s layout stacking
+bindsym $mod+w layout tabbed
+bindsym $mod+e layout toggle split
+
+# toggle tiling / floating
+bindsym $mod+Shift+space floating toggle
+
+# change focus between tiling / floating windows
+bindsym $mod+space focus mode_toggle
+
+# focus the parent container
+bindsym $mod+a focus parent
+
+# focus the child container
+bindsym $mod+Shift+A focus child
+
+# switch to workspace
+bindsym $mod+1 workspace 1
+bindsym $mod+2 workspace 2
+bindsym $mod+3 workspace 3
+bindsym $mod+4 workspace 4
+bindsym $mod+5 workspace 5
+bindsym $mod+6 workspace 6
+bindsym $mod+7 workspace 7
+bindsym $mod+8 workspace 8
+bindsym $mod+9 workspace 9
+bindsym $mod+0 workspace 10
+
+# move focused container to workspace
+bindsym $mod+Shift+1 move container to workspace 1
+bindsym $mod+Shift+2 move container to workspace 2
+bindsym $mod+Shift+3 move container to workspace 3
+bindsym $mod+Shift+4 move container to workspace 4
+bindsym $mod+Shift+5 move container to workspace 5
+bindsym $mod+Shift+6 move container to workspace 6
+bindsym $mod+Shift+7 move container to workspace 7
+bindsym $mod+Shift+8 move container to workspace 8
+bindsym $mod+Shift+9 move container to workspace 9
+bindsym $mod+Shift+0 move container to workspace 10
+
+# move workspace to another monitor
+bindsym $mod+Mod1+Left move workspace to output left
+bindsym $mod+Mod1+Right move workspace to output right
+bindsym $mod+Mod1+l move workspace to output right
+bindsym $mod+Mod1+h move workspace to output left
+
+
+# reload the configuration file
+bindsym $mod+Shift+c reload
+
+# restart i3 inplace (preserves your layout/session, can be used to upgrade i3)
+bindsym $mod+Shift+r restart
+
+# exit i3 (logs you out of your X session)
+bindsym $mod+Shift+e exec "i3-nagbar -f 'Noto' -t warning -m 'Session Manager: ' -b 'Shutdown' 'poweroff' -b 'Reboot' 'reboot' -b 'Lock' 'systemctl suspend' -b 'Exit' 'i3-msg exit'  "
+
+# resize window (you can also use the mouse for that)
+mode "resize" {
+        bindsym h resize shrink width 10 px or 10 ppt
+        bindsym j resize grow height 10 px or 10 ppt
+        bindsym k resize shrink height 10 px or 10 ppt
+        bindsym l resize grow width 10 px or 10 ppt
+
+        # same bindings, but for the arrow keys
+        bindsym Left resize shrink width 10 px or 10 ppt
+        bindsym Down resize grow height 10 px or 10 ppt
+        bindsym Up resize shrink height 10 px or 10 ppt
+        bindsym Right resize grow width 10 px or 10 ppt
+
+        # back to normal: Enter or Escape
+        bindsym Return mode "default"
+        bindsym Escape mode "default"
+}
+
+bindsym $mod+r mode "resize"
+
+set $bar_background #111111
+set $bar_foreground #ffffff
+set $bar_foreground-alt #444444
+set $bar_foreground-vis #888888
+set $bar_alert #E1544D
+bar {
+	# output HDMI
+	font pango:Dejavu Sans Mono Bold 8
+	position top
+
+	tray_output primary
+	tray_padding 0
+
+	colors {
+        background $bar_background
+        statusline 	#ffffff
+        separator $bar_background
+
+        focused_workspace  $bar_background $bar_background $bar_foreground
+        active_workspace   $bar_background $bar_background $bar_foreground-vis
+        inactive_workspace $bar_background $bar_background $bar_foreground-alt
+        urgent_workspace   $bar_background $bar_background $bar_alert
+        binding_mode       $bar_background $bar_background $bar_alert
+    }
+
+
+	status_command i3status --config ~/.config/i3status/config
+}
+
+
+##################
+### own config ###
+##################
+
+# Disable titlebar
+new_window pixel 1
+new_float pixel 1
+
+# Window Border 	<border> 	<background>	<text>
+client.focused      $normal  $normal		  #000000
+client.urgent       $urgent	 $urgent 	    #ffffff
+
+# Enable popup during fullscreen
+popup_during_fullscreen smart
+
+# Cycle through Workspaces
+bindsym $mod+Tab workspace next
+bindsym $mod+Shift+Tab workspace prev
+
+# Lock Shreen
+bindsym Mod1+q exec systemctl suspend
+
+# Jump to Urgent Window
+bindsym $mod+u [urgent=latest] focus
+
+# force border
+for_window [class=".*"] border pixel 1
+for_window [window_role="pop-up"] floating enable
+for_window [window_role="bubble"] floating enable
+for_window [window_role="task_dialog"] floating enable
+for_window [window_role="Preferences"] floating enable
+
+# Start dmenu run
+bindsym $mod+d exec --no-startup-id dmenu_run -fn 'Source Code Pro Mono:bold:pixelsize=11' -p 'Run' -nb '#111111' -sb '#b8bb26' -nf '#FFFFFF' -sf '#1d2021'
+
+# Run applications
+exec --no-startup-id xautolock -time 15 -locker systemctl suspend
+
+# Configure Volume control
+bindsym --release XF86AudioRaiseVolume exec amixer sset Master 5%+
+bindsym --release XF86AudioLowerVolume exec amixer sset Master 5%-
+bindsym --release XF86AudioMute exec amixer sset Master toggle
+bindsym --release XF86Search exec mic.sh
+
+# Set keymap
+exec --no-startup-id setxkbmap -layout us -variant altgr-intl -option caps:escape,eurosign:e
+
+# Configure dunst short cuts
+bindsym --release Mod1+space exec dunstctl close
+bindsym --release Mod1+Shift+space exec dunstctl history-pop
