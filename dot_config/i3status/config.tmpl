@@ -1,0 +1,67 @@
+general {
+	interval		= 5
+	color_good		= "#ffffff"
+	color_degraded	= "#444444"
+	color_bad		= "#444444"
+}
+
+order += "cpu_usage 0"
+order += "cpu_temperature 0"
+{{- if .hasBattery }}
+order += "battery 0"
+{{- end }}
+order += "volume master"
+order += "tztime local"
+{{- if ne .eNetworkInterface "None" }}
+order += "ethernet {{ .eNetworkInterface }}"
+{{- end }}
+{{- if ne .wNetworkInterface "None" }}
+order += "wireless {{ .wNetworkInterface }}"
+{{- end }}
+
+
+tztime local {
+	format = "DATE: %a. %d.%m.   TIME: %H:%M   "
+}
+
+cpu_usage {
+	format = "CPU: %usage   "
+}
+
+cpu_temperature 0 {
+	format = "TEMP: %degrees°C   "
+}
+
+volume master {
+	format = "VOL: %volume   "
+	format_muted = "VOL: %volume   "
+	mixer = "Master"
+	mixer_idx = 0
+}
+
+{{- if ne .wNetworkInterface "None" }}
+ethernet {{ .eNetworkInterface }} {
+		format_up = "E: up   "
+		format_down = "E: down   "
+}
+{{- end }}
+
+{{- if ne .wNetworkInterface "None" }}
+wireless {{ .wNetworkInterface }} {
+		format_up = "W: up   "
+		format_down = "W: down   "
+}
+{{- end }}
+
+{{- if .hasBattery }}
+battery 0 {
+		format = "BAT: %percentage   "
+		format_down = "No battery   "
+		status_chr = "+"
+		status_bat = ""
+		status_unk = ""
+		status_full = ""
+		path = "/sys/class/power_supply/BAT%d/uevent"
+		low_threshold = 10
+}
+{{- end }}
