@@ -1,0 +1,137 @@
+{
+    "layer": "buttom",
+        "position": "top",
+
+        "modules-left": [
+            "sway/workspaces",
+            "sway/mode",
+        ],
+
+        "modules-center": [
+            "sway/window"
+        ],
+
+        "modules-right": [
+            "cpu",
+            "memory",
+            "temperature",
+            "pulseaudio#1",
+            "pulseaudio#2",
+{{- if .hasBattery }}
+            "battery",
+{{- end }}
+            "clock#1",
+            "clock#2",
+{{- if ne .eNetworkInterface "None" }}
+            "network#1",
+{{- end }}
+{{- if ne .wNetworkInterface "None" }}
+            "network#2",
+{{- end }}
+            "custom/notification",
+            "tray"
+        ],
+
+        "sway/workspaces": {
+            "disable-scroll": true,
+            "format": "{name}"
+        },
+
+        "cpu": {
+            "interval": 5,
+            "format": "CPU: {usage}%"
+        },
+
+        "memory": {
+            "interval": 5,
+            "format": "MEM: {}%"
+        },
+
+        "temperature": {
+            "critical-threshold": 80,
+            "format": "TEMP: {temperatureC}°C"
+        },
+
+        "pulseaudio#1": {
+            "format": "VOL: {volume}%",
+            "on-click": "pamixer -t",
+            "on-click-right": "pavucontrol"
+        },
+
+        "pulseaudio#2": {
+            "format": "MIC: {format_source}",
+            "on-click": "pamixer -t",
+            "on-click-right": "pavucontrol"
+        },
+
+{{- if .hasBattery }}
+        "battery": {
+            "states": {
+                "good": 95,
+                "warning": 30,
+                "critical": 15
+            },
+            "format": "BAT: {capacity}%",
+        },
+{{- end }}
+
+        "clock#1": {
+            "format": "DATE: {:%a. %d.%m.}",
+            "tooltip": true,
+            "tooltip-format": "{:%A %d.%m.%Y%nWeek: %W}"
+        },
+
+        "clock#2": {
+            "format": "TIME: {:%H:%M:%S}",
+            "tooltip": false,
+            "interval": 5,
+        },
+
+{{- if ne .eNetworkInterface "None" }}
+        "network#1": {
+            "interface": "{{ .eNetworkInterface }}",
+            "format": "NET@{ifname}: up",
+            "format-disconnected": "{ifname}: down",
+            "tooltip-format": "IP: {ipaddr}\nUp: {bandwidthUpBits}\nDown: {bandwidthDownBits}\nSSID: {essid}\nStrength: {signalStrength}%",
+            "tooltip-format-disconnected": "Disconnected",
+            "max-length": 50
+        },
+{{- end }}
+
+{{- if ne .wNetworkInterface "None" }}
+        "network#2": {
+            "interface": "{{ .wNetworkInterface }}",
+            "format": "NET@{ifname}: up",
+            "format-disconnected": "{ifname}: down",
+            "tooltip-format": "IP: {ipaddr}\nUp: {bandwidthUpBits}\nDown: {bandwidthDownBits}\nSSID: {essid}\nStrength: {signalStrength}%",
+            "tooltip-format-disconnected": "Disconnected",
+            "max-length": 50
+        },
+{{- end }}
+
+        "custom/notification": {
+            "tooltip": false,
+            "format": "MSGs: {}{icon}",
+            "format-icons": {
+                "notification": "<span foreground='red'><sup></sup></span>",
+                "none": "",
+                "dnd-notification": "<span foreground='red'><sup></sup></span> (DND)",
+                "dnd-none": " (DND)",
+                "inhibited-notification": "<span foreground='red'><sup></sup></span>",
+                "inhibited-none": "",
+                "dnd-inhibited-notification": "<span foreground='red'><sup></sup></span> (DND)",
+                "dnd-inhibited-none": " (DND)"
+            },
+            "return-type": "json",
+            "exec-if": "which swaync-client",
+            "exec": "swaync-client -swb",
+            "on-click": "swaync-client -t -sw",
+            "on-click-right": "swaync-client -d -sw",
+            "escape": true
+        },
+
+        "tray": {
+            "icon-size": 20,
+            "spacing": 10
+        }
+}

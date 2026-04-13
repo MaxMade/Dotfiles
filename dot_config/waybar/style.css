@@ -1,0 +1,92 @@
+* {
+	font-size: 10px;
+	font-family: mono;
+	font-weight: bold;
+	box-shadow: none;
+}
+
+@keyframes blink {
+    0% {
+        background: #111111;
+    }
+    50% {
+        background: #cc241d;
+
+    }
+	100% {
+        background: #111111;
+	}
+}
+
+window#waybar {
+	background: #111111;
+	color: #ffffff;
+}
+
+
+#workspaces,
+#cpu,
+#memory,
+#temperatur,
+#pulseaudio,
+#memory,
+#battery,
+#clock,
+#network,
+#tray {
+	color: #ffffff;
+	padding: 0 10px;
+}
+
+#workspaces button {
+	color: #666666;
+	padding: 0 2px;
+}
+#workspaces button.focused {
+	color: #ffffff;
+}
+
+#workspaces button.urgent {
+    animation-name: blink;
+    animation-duration: 1.5s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+}
+
+#workspaces button:hover {
+	color: #eeeeee;
+	background: #444444;
+	border: #1a1a1a;
+	padding: 0 3px;
+}
+
+#mode {
+    color: #111111;
+    background: #cc241d;
+	padding: 0 3px;
+}
+
+#temperature.critical {
+    color: #cc241d;
+}
+
+#battery.warning:not(.charging) {
+    color: #d65d0e;
+}
+
+#battery.critical:not(.charging) {
+    animation-name: blink;
+    animation-duration: 1.5s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+}
+
+#pulseaudio.muted {
+    color: #444444;
+}
+
+#network.disconnected {
+    color: #444444;
+}
