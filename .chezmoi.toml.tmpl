@@ -4,13 +4,13 @@
 {{- end -}}
 {{- $hasBattery := promptBoolOnce . "hasBattery" "Does the machine have a battery" $hasBatteryAuto -}}
 
-{{- $eNetworkInterfaceAuto := output "sh" "-c" "ls /sys/class/net | grep '^e'" | trim -}}
+{{- $eNetworkInterfaceAuto := output "sh" "-c" "ls /sys/class/net | grep '^e' || true" | trim -}}
 {{- if not $eNetworkInterfaceAuto -}}
   {{- $eNetworkInterfaceAuto = "None" -}}
 {{- end -}}
 {{- $eNetworkInterface := promptStringOnce . "eNetworkInterface" "Default wired network interface" $eNetworkInterfaceAuto -}}
 
-{{- $wNetworkInterfaceAuto := output "sh" "-c" "ls /sys/class/net | grep '^w'" | trim -}}
+{{- $wNetworkInterfaceAuto := output "sh" "-c" "ls /sys/class/net | grep '^w' || true" | trim -}}
 {{- if not $wNetworkInterfaceAuto -}}
   {{- $wNetworkInterfaceAuto = "None" -}}
 {{- end -}}
