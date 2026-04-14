@@ -1,0 +1,23 @@
+[general]
+import = [
+  "~/.config/alacritty/themes/themes/gruvbox_dark.toml"
+]
+
+[font]
+size = 10
+
+  [font.bold]
+  family = "Source Code Pro"
+  style = "Bold"
+
+  [font.bold_italic]
+  family = "Source Code Pro"
+  style = "Bold Italic"
+
+  [font.italic]
+  family = "Source Code Pro"
+  style = "Italic"
+
+  [font.normal]
+  family = "Source Code Pro"
+  style = "Regular"

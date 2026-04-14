@@ -1,0 +1,41 @@
+theme = "gruvbox_modest"
+
+[editor]
+auto-format = false
+auto-pairs = false
+end-of-line-diagnostics = "hint"
+line-number = "relative"
+mouse = false
+popup-border = "all"
+rulers = [80]
+cursorline = true
+
+
+[editor.whitespace]
+render = "none"
+
+[editor.indent-guides]
+render = true
+character = "╎"
+skip-levels = 1
+
+[editor.cursor-shape]
+insert = "bar"
+normal = "block"
+select = "underline"
+
+[editor.statusline]
+left = ["mode", "spinner", "file-name", "version-control", "read-only-indicator", "file-modification-indicator"]
+mode.normal = "NORMAL"
+mode.insert = "INSERT"
+mode.select = "SELECT"
+
+[editor.inline-diagnostics]
+cursor-line = "disable"
+
+[keys.normal]
+space.t = ":set whitespace.render all"
+space.T = ":set whitespace.render none"
+space.i = ":set inline-diagnostics.cursor-line warning"
+space.I = ":set inline-diagnostics.cursor-line disable"
+C-l = ":reload-all"

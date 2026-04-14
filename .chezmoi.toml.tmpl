@@ -1,0 +1,31 @@
+{{- $hasBatteryAuto := false -}}
+{{- if glob "/sys/class/power_supply/BAT*" -}}
+  {{- $hasBatteryAuto = true -}}
+{{- end -}}
+{{- $hasBattery := promptBoolOnce . "hasBattery" "Does the machine have a battery" $hasBatteryAuto -}}
+
+{{- $eNetworkInterfaceAuto := output "sh" "-c" "ls /sys/class/net | grep '^e'" | trim -}}
+{{- if not $eNetworkInterfaceAuto -}}
+  {{- $eNetworkInterfaceAuto = "None" -}}
+{{- end -}}
+{{- $eNetworkInterface := promptStringOnce . "eNetworkInterface" "Default wired network interface" $eNetworkInterfaceAuto -}}
+
+{{- $wNetworkInterfaceAuto := output "sh" "-c" "ls /sys/class/net | grep '^w'" | trim -}}
+{{- if not $wNetworkInterfaceAuto -}}
+  {{- $wNetworkInterfaceAuto = "None" -}}
+{{- end -}}
+{{- $wNetworkInterface := promptStringOnce . "wNetworkInterface" "Default wireless network interface" $wNetworkInterfaceAuto -}}
+
+{{- $waylandAuto := output "sh" "-c" "echo $WAYLAND_DISPLAY" | trim -}}
+{{- if $waylandAuto -}}
+  {{- $waylandAuto = true -}}
+{{- else -}}
+  {{- $waylandAuto = false -}}
+{{- end -}}
+{{- $wayland := promptBoolOnce . "wayland" "Wayland session (empty means X11)" $waylandAuto -}}
+
+[data]
+    hasBattery = {{ $hasBattery }}
+    eNetworkInterface = {{ $eNetworkInterface | quote }}
+    wNetworkInterface = {{ $wNetworkInterface | quote }}
+    wayland = {{ $wayland }}

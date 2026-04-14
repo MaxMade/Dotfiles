@@ -1,0 +1,49 @@
+[language-server.codebook]
+command = "codebook-lsp"
+args = ["serve"]
+
+[[language]]
+name = "rust"
+language-servers = ["rust-analyzer", "codebook"]
+
+[[language]]
+name = "c"
+language-servers = ["clangd", "codebook"]
+
+[[language]]
+name = "cpp"
+language-servers = ["clangd", "codebook"]
+
+[[language]]
+name = "latex"
+language-servers = ["texlab", "codebook"]
+
+[[language]]
+name = "bibtex"
+language-servers = ["texlab", "codebook"]
+
+[[language]]
+name = "python"
+language-servers = ["pylsp", "codebook"]
+
+[[language]]
+name = "bash"
+language-servers = ["bash-language-server", "codebook"]
+
+[[language]]
+name = "openscad"
+language-servers = ["openscad-lsp", "codebook"]
+
+[[language]]
+name = "git-commit"
+language-servers = ["codebook"]
+
+[[language]]
+name = "markdown"
+language-servers = ["codebook"]
+
+[[language]]
+name = "text"
+scope = "text.plain"
+file-types = ["txt"]
+language-servers = ["codebook"]

@@ -1,0 +1,65 @@
+[global]
+	monitor = 0
+	geometry = "400x200-20+20"
+	shrink = no
+	transparency = 0
+	notification_height = 12
+	separator_height = 2
+	padding = 10
+	horizontal_padding = 10
+	frame_width = 2
+	frame_color = "#eff0f1"
+	separator_color = frame
+	sort = yes
+	idle_threshold = 120
+
+	font = Font Awesome 8
+	markup = full
+	format = "<b>%s</b>\n%b\n%p"
+	alignment = center
+	show_age_threshold = -1
+	word_wrap = no
+	ellipsize = middle
+	ignore_newline = no
+	stack_duplicates = true
+	hide_duplicate_count = true
+	show_indicators = yes
+
+	icon_position = left
+	max_icon_size = 64
+
+	sticky_history = yes
+	history_length = 20
+
+	dmenu = /usr/bin/dmenu -p dunst:
+	browser = /usr/bin/firefox -new-tab
+	always_run_script = true
+	title = Dunst
+	class = Dunst
+
+	force_xinerama = false
+
+[experimental]
+	per_monitor_dpi = false
+
+[shortcuts]
+	close = mod1+space
+	history = mod1+shift+space
+
+[urgency_low]
+	background = "#eff0f1"
+	foreground = "#000000"
+	frame_color = "#c6c7c8"
+	timeout = 5
+
+[urgency_normal]
+	background = "#eff0f1"
+	foreground = "#000000"
+	frame_color = "#c6c7c8"
+	timeout = 5
+
+[urgency_critical]
+	background = "#eff0f1"
+	foreground = "#000000"
+	frame_color = "#fb4934"
+	timeout = 0
