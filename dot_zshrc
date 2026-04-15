@@ -27,7 +27,6 @@ setopt extendedglob
 
 # Use vi Mode
 bindkey -v
-set -o vi
 
 # Delete
 bindkey -M vicmd -- "${key[Delete]}" delete-char
@@ -36,6 +35,12 @@ bindkey -M viins -- "${key[Delete]}" delete-char
 # Backspace
 bindkey -M vicmd -- "${key[Backspace]}" backward-delete-char
 bindkey -M viins -- "${key[Backspace]}" backward-delete-char
+
+# Vim-like deletion
+bindkey '^W' backward-kill-word
+bindkey '^U' backward-kill-line
+bindkey '^H' backward-delete-char
+WORDCHARS=''
 
 export KEYTIMEOUT=1
 
