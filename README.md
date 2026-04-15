@@ -33,6 +33,7 @@ These dotfiles aim to provide a consistent, reproducible, and minimal setup acro
 ### Editors
 
 - helix (main editor)
+- neovim (fallback editor)
 - vim (fallback editor)
 
 ---
