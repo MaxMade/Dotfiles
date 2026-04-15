@@ -10,7 +10,6 @@ flag_words = ["todo", "fixme"]
 
 ignore_paths = [
     "target/**/*",
-    ".git/**/*",
 ]
 
 ignore_patterns = [
