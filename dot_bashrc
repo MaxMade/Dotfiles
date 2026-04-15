@@ -18,6 +18,12 @@ shopt -s extglob
 set -o vi
 export KEYTIMEOUT=1
 
+# Vim-like deletion
+bind '"\C-w": backward-kill-word'
+bind '"\C-u": unix-line-discard'
+bind '"\C-h": backward-delete-char'
+export COMP_WORDBREAKS=$' \t\n"\'@><=;|&(:'
+
 ################
 # History file #
 ################
