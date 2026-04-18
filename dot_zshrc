@@ -100,8 +100,6 @@ done
 PATH_COMMAND="/usr/share/doc/pkgfile/"
 if [[ -f $PATH_COMMAND/command-not-found.zsh ]]; then
     source $PATH_COMMAND/command-not-found.zsh
-
-    break
 fi
 
 # Syntax highlighting
@@ -109,7 +107,6 @@ for PATH_SYNTAX in "/usr/share/zsh/plugins/zsh-syntax-highlighting/" "/usr/share
 do
     if [[ -f $PATH_SYNTAX/zsh-syntax-highlighting.zsh ]]; then
         source $PATH_SYNTAX/zsh-syntax-highlighting.zsh
-
         break
     fi
 done
