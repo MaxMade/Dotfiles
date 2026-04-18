@@ -1,4 +1,4 @@
-theme = "gruvbox_modest"
+theme = "gruvbox_modest_dark"
 
 [editor]
 auto-format = false

@@ -1,0 +1,9 @@
+inherits = "gruvbox_light"
+
+"ui.help" = { fg = "black", bg = "white" }
+
+"ui.popup" = { fg = "black", bg = "white" }
+"ui.popup.info" = { fg = "black", bg = "white" }
+
+
+"ui.menu" = { fg = "black", bg = "white" }
