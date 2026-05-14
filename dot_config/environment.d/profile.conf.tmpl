@@ -1,0 +1,54 @@
+########
+# Path #
+########
+
+PATH=%PATH%:/usr/bin/vendor_perl/
+PATH=%h/.local/bin:%PATH%
+PATH=%h/.bin:%PATH%
+PATH=%h/.cargo/bin:%PATH%
+
+#####################
+# Locale / language #
+#####################
+
+LC_ALL=
+LC_COLLATE=C
+
+#################
+# XDG base dirs #
+#################
+
+XDG_CONFIG_HOME=%h/.config
+XDG_CACHE_HOME=%h/.cache
+XDG_DATA_HOME=%h/.local/share
+XDG_STATE_HOME=%h/.local/state
+
+########################
+# Editor / preferences #
+########################
+
+EDITOR=helix
+VISUAL=helix
+
+########
+# Misc #
+########
+
+TERM=xterm-256color
+SSH_AUTH_SOCK=%t/gnupg/S.gpg-agent.ssh
+{{- if eq .chezmoi.osRelease.id "arch" }}
+DEBUGINFOD_URLS=https://debuginfod.archlinux.org
+{{- end }}
+{{- if eq .chezmoi.osRelease.id "debian" }}
+DEBUGINFOD_URLS=https://debuginfod.debian.net
+{{- end }}
+
+################
+# Applications #
+################
+
+{{- if .wayland }}
+MOZ_ENABLE_WAYLAND=1
+{{- end }}
+FZF_DEFAULT_OPTS=--layout=reverse
+
