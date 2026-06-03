@@ -43,6 +43,17 @@ name = "markdown"
 language-servers = ["codebook"]
 
 [[language]]
+name = "mail"
+file-types = [
+  "eml",
+  { glob = "/tmp/neomutt-*" },
+  { glob = "/tmp/mutt-*" },
+  { glob = "/tmp/mutt.*" },
+]
+language-servers = ["codebook"]
+formatter = { command = "fmt", args = ["-w", "72"] }
+
+[[language]]
 name = "text"
 scope = "text.plain"
 file-types = ["txt"]
