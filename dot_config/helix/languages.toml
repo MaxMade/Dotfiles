@@ -50,6 +50,7 @@ file-types = [
   { glob = "/tmp/mutt-*" },
   { glob = "/tmp/mutt.*" },
 ]
+text-width = 72
 language-servers = ["codebook"]
 formatter = { command = "fmt", args = ["-w", "72"] }
 
