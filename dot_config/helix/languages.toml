@@ -43,6 +43,10 @@ name = "markdown"
 language-servers = ["codebook"]
 
 [[language]]
+name = "typst"
+language-servers = ["tinymist", "codebook"]
+
+[[language]]
 name = "mail"
 file-types = [
   "eml",
