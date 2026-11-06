@@ -156,7 +156,7 @@ setopt prompt_subst
 zmodload zsh/datetime
 autoload -Uz add-zsh-hook
 
-# Git: (branch, new ?, modified +, deleted -, staged !)
+# Git: (branch, untracked ?, modified +, deleted -, staged !)
 _prompt_git_info() {
     _prompt_git=
     (( $+commands[git] )) || return
@@ -173,7 +173,6 @@ _prompt_git_info() {
     for line in "${(@)lines[2,-1]}"; do
         x=${line[1]} y=${line[2]}
         [[ $x$y == '??' ]] && { new='?'; continue }
-        [[ $x == A ]] && new='?'
         [[ $y == [MT] ]] && modified='+'
         [[ $x == D || $y == D ]] && deleted='-'
         [[ $x == [MTADRC] ]] && staged='!'

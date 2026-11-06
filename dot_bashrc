@@ -135,7 +135,7 @@ bind 'set vi-cmd-mode-string \1\e[1 q\2'
 #   Exit Code: 130        <- failed commands
 # user@host ~/dir (main?+-!) $
 
-# Git: (branch, new ?, modified +, deleted -, staged !)
+# Git: (branch, untracked ?, modified +, deleted -, staged !)
 _prompt_git_info() {
     _prompt_git=
     type -P git >/dev/null || return
@@ -154,7 +154,6 @@ _prompt_git_info() {
         fi
         x=${line:0:1} y=${line:1:1}
         [[ $x$y == '??' ]] && { new='?'; continue; }
-        [[ $x == A ]] && new='?'
         [[ $y == [MT] ]] && modified='+'
         [[ $x == D || $y == D ]] && deleted='-'
         [[ $x == [MTADRC] ]] && staged='!'
@@ -271,4 +270,3 @@ elif ! declare -F command_not_found_handle >/dev/null && [ -x /usr/lib/command-n
         return 127
     }
 fi
-
