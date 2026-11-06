@@ -2,7 +2,12 @@
 # Exports #
 ###########
 
-export MANPAGER="vim -M +MANPAGER -"
+# Man pages in vim, falling back to neovim, then the default pager
+if type -P vim >/dev/null; then
+    export MANPAGER="vim -M +MANPAGER -"
+elif type -P nvim >/dev/null; then
+    export MANPAGER="nvim +Man!"
+fi
 
 ####################
 # Generic settings #
@@ -16,13 +21,21 @@ shopt -s extglob
 
 # Use vi mode
 set -o vi
-export KEYTIMEOUT=1
+bind 'set keyseq-timeout 10'
 
 # Vim-like deletion
 bind '"\C-w": backward-kill-word'
 bind '"\C-u": unix-line-discard'
 bind '"\C-h": backward-delete-char'
 export COMP_WORDBREAKS=$' \t\n"\'@><=;|&(:'
+
+# Ctrl+K/J: search history for lines starting with what's typed
+for MAP in vi-insert vi-command
+do
+    bind -m $MAP '"\C-k": history-search-backward'
+    bind -m $MAP '"\C-j": history-search-forward'
+done
+unset MAP
 
 ################
 # History file #
@@ -44,127 +57,218 @@ alias ls="ls --color=auto --human-readable"
 alias sl="ls --color=auto --human-readable"
 alias la="ls --color=auto --human-readable -la"
 alias ..="cd .."
-alias less="less -r"
+alias less="less -R"
 
-############
-# Plugins  #
-############
+##################
+# Tab Completion #
+##################
 
-# fzf
-for PATH_FZF in "/usr/share/fzf" "/usr/share/doc/fzf/examples"
-do
-    if [ -f "$PATH_FZF/key-bindings.bash" ]; then
-        source "$PATH_FZF/key-bindings.bash"
-    fi
-done
-
-# Command not found hook
-if [ -f /usr/share/doc/pkgfile/command-not-found.bash ]; then
-    source /usr/share/doc/pkgfile/command-not-found.bash
+# Load bash-completion if the system bashrc hasn't already (Debian leaves it to ~/.bashrc)
+if ! shopt -oq posix && [ -z "${BASH_COMPLETION_VERSINFO-}" ]; then
+    for PATH_COMPLETION in "/usr/share/bash-completion/bash_completion" "/etc/bash_completion"
+    do
+        if [ -f "$PATH_COMPLETION" ]; then
+            source "$PATH_COMPLETION"
+            break
+        fi
+    done
+    unset PATH_COMPLETION
 fi
 
 #############
 # Functions #
 #############
 
+# "git graph" opens tig (falls back to git log if tig is missing)
 git() {
     if [ "$1" = "graph" ]; then
-        tig --all
+        if type -P tig >/dev/null; then
+            tig --all
+        else
+            command git log --graph --oneline --decorate --all
+        fi
     else
         command git "$@"
     fi
 }
 
+# cheat python reverse list -> cht.sh/python/reverse+list
+# Fetch with curl, falling back to wget; page with less, falling back to more
 cheat() {
-    curl -s "cht.sh/$*" | less
-}
-
-##########
-# Prompt #
-##########
-
-# Git branch function
-parse_git_branch() {
-  if ! git rev-parse --is-inside-work-tree &>/dev/null; then
-    return
-  fi
-
-  branch=$(git symbolic-ref --short HEAD 2>/dev/null)
-  if [ -z "$branch" ]; then
-    branch=$(git rev-parse --short HEAD 2>/dev/null)
-  fi
-
-  status=$(git status --porcelain 2>/dev/null)
-
-  staged=""
-  changed=""
-
-  if echo "$status" | grep -qE '^[A-Z]'; then
-    staged="!"
-  fi
-
-  if echo "$status" | grep -qE '^.[A-Z]'; then
-    changed="+"
-  fi
-
-  echo "$branch$changed$staged"
-}
-
-# Prompt
-set_prompt() {
-    local EXIT="$?"
-
-    # user@host
-    PS1="\[\e[32m\]\u\[\e[0m\]\[\e[34m\]@\[\e[0m\]"
-
-    # hostname (underline if ssh)
-    if [ -z "$SSH_TTY" ]; then
-        PS1+="\[\e[32m\]\h\[\e[0m\]"
+    local -a fetch pager
+    if type -P curl >/dev/null; then
+        fetch=(curl -s)
+    elif type -P wget >/dev/null; then
+        fetch=(wget -qO-)
     else
-        PS1+="\[\e[4;32m\]\h\[\e[0m\]"
+        echo "cheat: curl or wget is required" >&2
+        return 1
     fi
-
-    # path
-    PS1+=" \[\e[34m\]\w\[\e[0m\] "
-
-    # git branch
-    local GIT_BRANCH=$(parse_git_branch)
-    if [ -n "$GIT_BRANCH" ]; then
-        PS1+="\[\e[33m\]($GIT_BRANCH)\[\e[0m\] "
-    fi
-
-    # Exit status of last command
-    if [ $EXIT -eq 0 ]; then
-        PS1+="\[\e[32m\][$EXIT]\[\e[0m\] "
+    if type -P less >/dev/null; then
+        pager=(less -R)
     else
-        PS1+="\[\e[31m\][$EXIT]\[\e[0m\] "
+        pager=(more)
     fi
 
-    # prompt symbol
-    PS1+="\[\e[32m\]\\$\[\e[0m\] "
+    local topic=$1
+    (( $# )) && shift
+    local IFS=+
+    local query="$*"
+    "${fetch[@]}" "https://cht.sh/$topic${query:+/$query}" | "${pager[@]}"
 }
-
-PROMPT_COMMAND=set_prompt
 
 ################
 # Cursor Shape #
 ################
 
-# vi mode cursor shape
-function set_cursor() {
-    if [[ $READLINE_LINE ]]; then
-        echo -ne "\e[5 q"  # insert
-    else
-        echo -ne "\e[1 q"  # normal
-    fi
+# Beam in insert mode, block in normal mode
+bind 'set show-mode-in-prompt on'
+bind 'set vi-ins-mode-string \1\e[5 q\2'
+bind 'set vi-cmd-mode-string \1\e[1 q\2'
+
+##########
+# Prompt #
+##########
+
+# Extra lines only appear when relevant:
+#   Duration: 3s          <- commands longer than 2s
+#   Exit Code: 130        <- failed commands
+# user@host ~/dir (main?+-!) $
+
+# Git: (branch, new ?, modified +, deleted -, staged !)
+_prompt_git_info() {
+    _prompt_git=
+    type -P git >/dev/null || return
+    local out
+    out=$(command git --no-optional-locks status --porcelain --branch 2>/dev/null) || return
+
+    local line x y branch new= modified= deleted= staged= first=1
+    while IFS= read -r line; do
+        if (( first )); then
+            first=0
+            branch=${line#\#\# }
+            branch=${branch#No commits yet on }
+            branch=${branch%%...*}
+            branch=${branch% (no branch)}
+            continue
+        fi
+        x=${line:0:1} y=${line:1:1}
+        [[ $x$y == '??' ]] && { new='?'; continue; }
+        [[ $x == A ]] && new='?'
+        [[ $y == [MT] ]] && modified='+'
+        [[ $x == D || $y == D ]] && deleted='-'
+        [[ $x == [MTADRC] ]] && staged='!'
+    done <<< "$out"
+
+    _prompt_git="($branch$new$modified$deleted$staged) "
 }
-PROMPT_COMMAND="set_prompt; set_cursor"
+
+_prompt_command() {
+    local exit=$?
+
+    # Duration line (only for commands longer than 2s)
+    if [ -n "${_prompt_start-}" ]; then
+        local ms=$(( (${EPOCHREALTIME//[!0-9]/} - _prompt_start) / 1000 ))
+        unset _prompt_start
+        if (( ms >= 2000 )); then
+            local s=$(( ms / 1000 ))
+            local d=$(( s / 86400 )) h=$(( s % 86400 / 3600 )) m=$(( s % 3600 / 60 ))
+            local dur=
+            (( d )) && dur+="${d}d"
+            (( d || h )) && dur+="${h}h"
+            (( d || h || m )) && dur+="${m}m"
+            dur+="$(( s % 60 ))s"
+            printf '\e[33m  Duration: %s\e[0m\n' "$dur"
+        fi
+    fi
+
+    # Exit code line (only on failure)
+    (( exit )) && printf '\e[31m  Exit Code: %s\e[0m\n' "$exit"
+
+    # Last two path components, with ~ for home (like zsh's %2~)
+    _prompt_dir=$PWD
+    if [[ $PWD == "$HOME" || $PWD == "$HOME"/* ]]; then
+        _prompt_dir="~${PWD#"$HOME"}"
+    fi
+    [[ $_prompt_dir =~ ([^/]*/[^/]*)$ ]] && _prompt_dir=${BASH_REMATCH[1]}
+
+    # Lock icon for read-only directories
+    if [ -w "$PWD" ]; then _prompt_ro=; else _prompt_ro=' 🔒'; fi
+
+    _prompt_git_info
+}
+
+# Record the start time just before each command runs (bash 5.0+).
+# PS0 expands to nothing; the arithmetic only runs on a set variable.
+_prompt_ps0=
+PS0='${_prompt_ps0:0:$((_prompt_start=${EPOCHREALTIME//[!0-9]/}, 0))}'
+
+[[ $PROMPT_COMMAND == *_prompt_command* ]] ||
+    PROMPT_COMMAND="_prompt_command${PROMPT_COMMAND:+; $PROMPT_COMMAND}"
+
+# user@host (hostname underlined over SSH)
+PS1='\[\e[32m\]\u\[\e[0m\]\[\e[34m\]@\[\e[0m\]'
+if [ -n "$SSH_CONNECTION" ]; then
+    PS1+='\[\e[4;32m\]\H\[\e[0m\] '
+else
+    PS1+='\[\e[32m\]\H\[\e[0m\] '
+fi
+
+# ~/dir (git) $
+PS1+='\[\e[34m\]${_prompt_dir}\[\e[0m\]'
+PS1+='\[\e[31m\]${_prompt_ro}\[\e[0m\] '
+PS1+='\[\e[33m\]${_prompt_git}\[\e[0m\]'
+PS1+='\[\e[32m\]$\[\e[0m\] '
 
 ###################
 # SSH Agent (GPG) #
 ###################
 
-unset SSH_AGENT_PID
-if [ "${gnupg_SSH_AUTH_SOCK_by:-0}" -ne $$ ]; then
-    export SSH_AUTH_SOCK="$(gpgconf --list-dirs agent-ssh-socket)"
+if type -P gpgconf >/dev/null; then
+    unset SSH_AGENT_PID
+    if [ "${gnupg_SSH_AUTH_SOCK_by:-0}" -ne $$ ]; then
+        export SSH_AUTH_SOCK="$(gpgconf --list-dirs agent-ssh-socket)"
+    fi
+    export GPG_TTY=$(tty)
+    gpg-connect-agent updatestartuptty /bye >/dev/null 2>&1
 fi
+
+###########
+# Plugins #
+###########
+# Paths: Arch first, Debian second. Missing plugins are skipped.
+
+# fzf (fzf >= 0.48 provides its own init, older versions ship scripts)
+if type -P fzf >/dev/null; then
+    if FZF_INIT=$(fzf --bash 2>/dev/null); then
+        eval "$FZF_INIT"
+    else
+        for PATH_FZF in "/usr/share/fzf" "/usr/share/doc/fzf/examples"
+        do
+            if [ -f "$PATH_FZF/key-bindings.bash" ]; then
+                source "$PATH_FZF/key-bindings.bash"
+                [ -f "$PATH_FZF/completion.bash" ] && source "$PATH_FZF/completion.bash"
+                break
+            fi
+        done
+        unset PATH_FZF
+    fi
+    unset FZF_INIT
+fi
+
+# Without fzf: Ctrl+R uses readline's built-in reverse history search
+if ! declare -F __fzf_history__ >/dev/null; then
+    bind -m vi-insert '"\C-r": reverse-search-history'
+    bind -m vi-command '"\C-r": reverse-search-history'
+fi
+
+# Command not found hook (Arch: pkgfile, Debian: command-not-found)
+if [ -f /usr/share/doc/pkgfile/command-not-found.bash ]; then
+    source /usr/share/doc/pkgfile/command-not-found.bash
+elif ! declare -F command_not_found_handle >/dev/null && [ -x /usr/lib/command-not-found ]; then
+    command_not_found_handle() {
+        /usr/lib/command-not-found -- "$1"
+        return 127
+    }
+fi
+

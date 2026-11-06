@@ -13,7 +13,12 @@ key[Ctrl-j]="^J"
 # Exports #
 ###########
 
-export MANPAGER="vim -M +MANPAGER -"
+# Man pages in vim, falling back to neovim, then the default pager
+if (( $+commands[vim] )); then
+    export MANPAGER="vim -M +MANPAGER -"
+elif (( $+commands[nvim] )); then
+    export MANPAGER="nvim +Man!"
+fi
 
 ####################
 # Generic settings #
@@ -44,7 +49,7 @@ WORDCHARS=''
 
 export KEYTIMEOUT=1
 
-autoload edit-command-line
+autoload -Uz edit-command-line
 zle -N edit-command-line
 bindkey -M vicmd n edit-command-line
 
@@ -54,7 +59,6 @@ bindkey -M vicmd n edit-command-line
 
 HISTFILE=~/.zsh_history
 setopt hist_ignore_all_dups
-setopt appendhistory
 setopt incappendhistory
 setopt histignorespace
 HISTSIZE=10000
@@ -68,51 +72,215 @@ alias ls="ls --color=auto --human-readable"
 alias sl="ls --color=auto --human-readable"
 alias la="ls --color=auto --human-readable -la"
 alias ..="cd .."
-alias less="less -r"
+alias less="less -R"
 
 ##################
 # Tab Completion #
 ##################
 
+zmodload zsh/complist
 autoload -Uz compinit
 compinit
 
 zstyle ":completion:*" menu select
-zmodload zsh/complist
 bindkey -M menuselect "h" vi-backward-char
 bindkey -M menuselect "k" vi-up-line-or-history
 bindkey -M menuselect "l" vi-forward-char
 bindkey -M menuselect "j" vi-down-line-or-history
 
+#############
+# Functions #
+#############
+
+# "git graph" opens tig (falls back to git log if tig is missing)
+git() {
+    if [[ $1 == graph ]]; then
+        if (( $+commands[tig] )); then
+            tig --all
+        else
+            command git log --graph --oneline --decorate --all
+        fi
+    else
+        command git "$@"
+    fi
+}
+
+# cheat python reverse list -> cht.sh/python/reverse+list
+# Fetch with curl, falling back to wget; page with less, falling back to more
+cheat() {
+    local -a fetch pager
+    if (( $+commands[curl] )); then
+        fetch=(curl -s)
+    elif (( $+commands[wget] )); then
+        fetch=(wget -qO-)
+    else
+        echo "cheat: curl or wget is required" >&2
+        return 1
+    fi
+    if (( $+commands[less] )); then
+        pager=(less -R)
+    else
+        pager=(more)
+    fi
+
+    local topic=$1; (( $# )) && shift
+    $fetch "https://cht.sh/$topic${*:+/${(j:+:)@}}" | $pager
+}
+
+################
+# Cursor Shape #
+################
+
+# Beam in insert mode, block in normal mode
+autoload -Uz add-zle-hook-widget
+_cursor_shape() {
+    if [[ $KEYMAP == vicmd ]]; then
+        echo -ne "\e[1 q"
+    else
+        echo -ne "\e[5 q"
+    fi
+}
+add-zle-hook-widget line-init _cursor_shape
+add-zle-hook-widget keymap-select _cursor_shape
+
+##########
+# Prompt #
+##########
+
+# Extra lines only appear when relevant:
+#   Duration: 3s          <- commands longer than 2s
+#   Exit Code: 130        <- failed commands
+# user@host ~/dir (main?+-!) $
+
+setopt prompt_subst
+zmodload zsh/datetime
+autoload -Uz add-zsh-hook
+
+# Git: (branch, new ?, modified +, deleted -, staged !)
+_prompt_git_info() {
+    _prompt_git=
+    (( $+commands[git] )) || return
+    local out
+    out=$(command git --no-optional-locks status --porcelain --branch 2>/dev/null) || return
+
+    local -a lines=("${(@f)out}")
+    local branch=${lines[1]#\#\# }
+    branch=${branch#No commits yet on }
+    branch=${branch%%...*}
+    branch=${branch% (no branch)}
+
+    local line x y new= modified= deleted= staged=
+    for line in "${(@)lines[2,-1]}"; do
+        x=${line[1]} y=${line[2]}
+        [[ $x$y == '??' ]] && { new='?'; continue }
+        [[ $x == A ]] && new='?'
+        [[ $y == [MT] ]] && modified='+'
+        [[ $x == D || $y == D ]] && deleted='-'
+        [[ $x == [MTADRC] ]] && staged='!'
+    done
+
+    _prompt_git="%F{yellow}(${branch//\%/%%}$new$modified$deleted$staged)%f "
+}
+
+_prompt_preexec() {
+    _prompt_start=$EPOCHREALTIME
+}
+
+_prompt_precmd() {
+    local exit=$?
+
+    # Duration line (only for commands longer than 2s)
+    if [[ -n $_prompt_start ]]; then
+        local -i ms=$(( (EPOCHREALTIME - _prompt_start) * 1000 ))
+        unset _prompt_start
+        if (( ms >= 2000 )); then
+            local -i s=$(( ms / 1000 ))
+            local -i d=$(( s / 86400 )) h=$(( s % 86400 / 3600 )) m=$(( s % 3600 / 60 ))
+            local dur=
+            (( d )) && dur+="${d}d"
+            (( d || h )) && dur+="${h}h"
+            (( d || h || m )) && dur+="${m}m"
+            dur+="$(( s % 60 ))s"
+            print -P "%F{yellow}  Duration: $dur%f"
+        fi
+    fi
+
+    # Exit code line (only on failure)
+    (( exit )) && print -P "%F{red}  Exit Code: $exit%f"
+
+    # Lock icon for read-only directories
+    [[ -w $PWD ]] && _prompt_ro= || _prompt_ro='%F{red} 🔒%f'
+
+    _prompt_git_info
+}
+
+add-zsh-hook preexec _prompt_preexec
+add-zsh-hook precmd _prompt_precmd
+
+# user@host (hostname underlined over SSH)
+PS1='%F{green}%n%f%F{blue}@%f'
+if [[ -n $SSH_CONNECTION ]]; then
+    PS1+='%F{green}%U%M%u%f '
+else
+    PS1+='%F{green}%M%f '
+fi
+
+# ~/dir (git) $
+PS1+='%F{blue}%2~%f${_prompt_ro} ${_prompt_git}%F{green}$%f '
+RPS1=
+
+###################
+# SSH Agent (GPG) #
+###################
+
+if (( $+commands[gpgconf] )); then
+    unset SSH_AGENT_PID
+    if [ "${gnupg_SSH_AUTH_SOCK_by:-0}" -ne $$ ]; then
+        export SSH_AUTH_SOCK="$(gpgconf --list-dirs agent-ssh-socket)"
+    fi
+    export GPG_TTY=$TTY
+    gpg-connect-agent updatestartuptty /bye >/dev/null 2>&1
+fi
+
 ###########
 # Plugins #
 ###########
+# Kept last: zsh-syntax-highlighting must be sourced after all widgets,
+# and history-substring-search after zsh-syntax-highlighting.
+# Paths: Arch first, Debian second. Missing plugins are skipped.
 
-# fzf
-for PATH_FZF in "/usr/share/fzf/" "/usr/share/doc/fzf/examples/"
-do
-    if [[ -f $PATH_FZF/key-bindings.zsh ]]; then
-        source $PATH_FZF/key-bindings.zsh
+# fzf (fzf >= 0.48 provides its own init, older versions ship scripts)
+if (( $+commands[fzf] )); then
+    if FZF_INIT=$(fzf --zsh 2>/dev/null); then
+        eval "$FZF_INIT"
+    else
+        for PATH_FZF in "/usr/share/fzf" "/usr/share/doc/fzf/examples"
+        do
+            if [[ -f $PATH_FZF/key-bindings.zsh ]]; then
+                source $PATH_FZF/key-bindings.zsh
+                [[ -f $PATH_FZF/completion.zsh ]] && source $PATH_FZF/completion.zsh
+                break
+            fi
+        done
     fi
-done
-
-# Command not found hook
-PATH_COMMAND="/usr/share/doc/pkgfile/"
-if [[ -f $PATH_COMMAND/command-not-found.zsh ]]; then
-    source $PATH_COMMAND/command-not-found.zsh
+    unset FZF_INIT
 fi
 
-# Syntax highlighting
-for PATH_SYNTAX in "/usr/share/zsh/plugins/zsh-syntax-highlighting/" "/usr/share/zsh-syntax-highlighting/"
-do
-    if [[ -f $PATH_SYNTAX/zsh-syntax-highlighting.zsh ]]; then
-        source $PATH_SYNTAX/zsh-syntax-highlighting.zsh
-        break
-    fi
-done
+# Without fzf: Ctrl+R falls back to zsh's built-in incremental history search
+if (( ! $+widgets[fzf-history-widget] )); then
+    bindkey -M viins '^R' history-incremental-pattern-search-backward
+    bindkey -M vicmd '^R' history-incremental-pattern-search-backward
+fi
+
+# Command not found hook (Arch: pkgfile, Debian: command-not-found)
+if [[ -f /usr/share/doc/pkgfile/command-not-found.zsh ]]; then
+    source /usr/share/doc/pkgfile/command-not-found.zsh
+elif [[ -f /etc/zsh_command_not_found ]]; then
+    source /etc/zsh_command_not_found
+fi
 
 # Autosuggestions
-for PATH_AUTOSUGGEST in "/usr/share/zsh/plugins/zsh-autosuggestions/" "/usr/share/zsh-autosuggestions/"
+for PATH_AUTOSUGGEST in "/usr/share/zsh/plugins/zsh-autosuggestions" "/usr/share/zsh-autosuggestions"
 do
     if [[ -f $PATH_AUTOSUGGEST/zsh-autosuggestions.zsh ]]; then
         source $PATH_AUTOSUGGEST/zsh-autosuggestions.zsh
@@ -126,114 +294,39 @@ do
     fi
 done
 
-# Substring cmd completion
-for PATH_SUBSTRING in "/usr/share/zsh/plugins/zsh-history-substring-search/" "/usr/share/zsh-history-substring-search/"
+# Syntax highlighting
+for PATH_SYNTAX in "/usr/share/zsh/plugins/zsh-syntax-highlighting" "/usr/share/zsh-syntax-highlighting"
 do
-    if [[ -f $PATH_SUBSTRING/zsh-history-substring-search.zsh ]]; then
-        source $PATH_SUBSTRING/zsh-history-substring-search.zsh
-
-        bindkey -M vicmd "k" history-substring-search-up
-        bindkey -M vicmd "j" history-substring-search-down
-
-        bindkey -M viins -- "${key[Ctrl-k]}" history-substring-search-up
-        bindkey -M vicmd -- "${key[Ctrl-k]}" history-substring-search-up
-        bindkey -M viins -- "${key[Ctrl-j]}" history-substring-search-down
-        bindkey -M vicmd -- "${key[Ctrl-j]}" history-substring-search-down
-
-        HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND=none
-        HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_NOT_FOUND=none
-
+    if [[ -f $PATH_SYNTAX/zsh-syntax-highlighting.zsh ]]; then
+        source $PATH_SYNTAX/zsh-syntax-highlighting.zsh
         break
-    else
-        bindkey -M vicmd "k" history-substring-search-up
-        bindkey -M vicmd "j" history-substring-search-down
-
-        bindkey "${key[Ctrl-k]}" history-search-backward
-        bindkey "${key[Ctrl-j]}" history-search-forward
     fi
 done
 
-#############
-# Functions #
-#############
-
-git() {
-    if [ "$@[1]" = "graph" ]; then
-        tig --all
-    else
-        command git "$@"
+# Substring history search (fallback: built-in prefix search)
+for PATH_SUBSTRING in "/usr/share/zsh/plugins/zsh-history-substring-search" "/usr/share/zsh-history-substring-search"
+do
+    if [[ -f $PATH_SUBSTRING/zsh-history-substring-search.zsh ]]; then
+        source $PATH_SUBSTRING/zsh-history-substring-search.zsh
+        break
     fi
-}
+done
 
-cheat() {
-    curl -s cht.sh/"$@" | less
-}
+if (( $+widgets[history-substring-search-up] )); then
+    bindkey -M vicmd "k" history-substring-search-up
+    bindkey -M vicmd "j" history-substring-search-down
 
-##########
-# Prompt #
-##########
+    bindkey -M viins -- "${key[Ctrl-k]}" history-substring-search-up
+    bindkey -M vicmd -- "${key[Ctrl-k]}" history-substring-search-up
+    bindkey -M viins -- "${key[Ctrl-j]}" history-substring-search-down
+    bindkey -M vicmd -- "${key[Ctrl-j]}" history-substring-search-down
 
-autoload -U colors zsh/terminfo
-autoload -Uz vcs_info
-
-# autoload -U colors && colors
-zstyle ":vcs_info:*" check-for-changes true
-zstyle ":vcs_info:*" stagedstr "!"
-zstyle ":vcs_info:*" unstagedstr "+"
-
-# Information about branch, staged and changed files
-setopt prompt_subst
-zstyle ":vcs_info:*" enable git svn
-zstyle ":vcs_info:*" formats "%F{yellow}(%b%u%c)%f "
-
-## Update each time new prompt is rendered
-precmd () {
-    vcs_info
-}
-
-# Set the actual prompt as following (hostname underlined if ssh):
-# user@hostname ~ echo 42            [0]
-setprompt() {
-
-# user@
-PS1="%F{green}%n%f%F{blue}@%f"
-
-# hostname (underlinded if ssh)
-if [ -z "$SSH_TTY" ]; then
-    PS1="$PS1%F{green}%M%f"
+    HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND=none
+    HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_NOT_FOUND=none
 else
-    PS1="$PS1%F{green}%U%M%u%f"
+    bindkey -M viins -- "${key[Ctrl-k]}" history-beginning-search-backward
+    bindkey -M vicmd -- "${key[Ctrl-k]}" history-beginning-search-backward
+    bindkey -M viins -- "${key[Ctrl-j]}" history-beginning-search-forward
+    bindkey -M vicmd -- "${key[Ctrl-j]}" history-beginning-search-forward
 fi
-# ~
-PS1="$PS1 %F{blue}%2~%f "
 
-# VCS information
-PS1="$PS1\$vcs_info_msg_0_%F{green}$%f "
-
-# Exit status of last command
-RPS1="[%(?.%F{green}%?%f.%F{red}%?%f)]"
-}
-setprompt
-
-################
-# Cursor Shape #
-################
-
-zle -N zle-line-init
-zle -N zle-keymap-select
-function zle-line-init zle-keymap-select {
-    if [[ "$KEYMAP" = "vicmd" ]]; then
-        echo -ne "\e[1 q"
-    else
-        echo -ne "\e[5 q"
-    fi
-}
-
-###################
-# SSH Agent (GPG) #
-###################
-
-unset SSH_AGENT_PID
-if [ "${gnupg_SSH_AUTH_SOCK_by:-0}" -ne $$ ]; then
-    export SSH_AUTH_SOCK="$(gpgconf --list-dirs agent-ssh-socket)"
-fi
