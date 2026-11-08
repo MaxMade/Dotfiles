@@ -1,131 +1,84 @@
-###################
-# Key Definitions #
-###################
-
-typeset -g -A key
-key[Backspace]="^?"
-key[Delete]="^[[3~"
-key[Ctrl-Space]="^@"
-key[Ctrl-k]="^K"
-key[Ctrl-j]="^J"
-
 ###########
-# Exports #
+# Helpers #
 ###########
+
+# True if the command is installed
+_rc_have() {
+    (( $+commands[$1] ))
+}
+
+# Sets $REPLY to the first argument that is an existing file.
+# The caller sources it: a file sourced inside a function would turn
+# the variables it declares into locals of that function.
+_rc_find_file() {
+    local file
+    for file; do
+        [[ -f $file ]] && { REPLY=$file; return 0 }
+    done
+    return 1
+}
+
+###############
+# Environment #
+###############
 
 # Man pages in vim, falling back to neovim, then the default pager
-if (( $+commands[vim] )); then
+if _rc_have vim; then
     export MANPAGER="vim -M +MANPAGER -"
-elif (( $+commands[nvim] )); then
+elif _rc_have nvim; then
     export MANPAGER="nvim +Man!"
 fi
 
-####################
-# Generic settings #
-####################
+#################
+# Shell Options #
+#################
 
 setopt extendedglob
 
-##############
-# Keybinding #
-##############
+###########
+# History #
+###########
 
-# Use vi Mode
+HISTFILE=~/.zsh_history
+HISTSIZE=10000
+SAVEHIST=10000
+setopt hist_ignore_all_dups   # keep only the newest copy of a command
+setopt hist_ignore_space      # don't save commands starting with a space
+setopt inc_append_history     # save each command right away
+
+################
+# Key Bindings #
+################
+
+# Vi mode, with a 10 ms timeout for multi-key sequences (fast Esc)
 bindkey -v
+KEYTIMEOUT=1
 
-# Delete
-bindkey -M vicmd -- "${key[Delete]}" delete-char
-bindkey -M viins -- "${key[Delete]}" delete-char
+# Delete and Backspace
+for keymap in viins vicmd; do
+    bindkey -M $keymap '^[[3~' delete-char
+    bindkey -M $keymap '^?'    backward-delete-char
+done
 
-# Backspace
-bindkey -M vicmd -- "${key[Backspace]}" backward-delete-char
-bindkey -M viins -- "${key[Backspace]}" backward-delete-char
-
-# Vim-like deletion
-bindkey '^W' backward-kill-word
-bindkey '^U' backward-kill-line
-bindkey '^H' backward-delete-char
+# Vim-like deletion in insert mode (Ctrl+W stops at punctuation)
+bindkey -M viins '^W' backward-kill-word
+bindkey -M viins '^U' backward-kill-line
+bindkey -M viins '^H' backward-delete-char
 WORDCHARS=''
 
-export KEYTIMEOUT=1
+# History: Ctrl+K/J search for lines starting with what's typed,
+# Ctrl+R searches anywhere (both replaced by plugins when installed)
+for keymap in viins vicmd; do
+    bindkey -M $keymap '^K' history-beginning-search-backward
+    bindkey -M $keymap '^J' history-beginning-search-forward
+    bindkey -M $keymap '^R' history-incremental-pattern-search-backward
+done
+unset keymap
 
+# n in normal mode: edit the command line in $EDITOR
 autoload -Uz edit-command-line
 zle -N edit-command-line
 bindkey -M vicmd n edit-command-line
-
-################
-# History file #
-################
-
-HISTFILE=~/.zsh_history
-setopt hist_ignore_all_dups
-setopt incappendhistory
-setopt histignorespace
-HISTSIZE=10000
-SAVEHIST=10000
-
-#########
-# Alias #
-#########
-
-alias ls="ls --color=auto --human-readable"
-alias sl="ls --color=auto --human-readable"
-alias la="ls --color=auto --human-readable -la"
-alias ..="cd .."
-alias less="less -R"
-
-##################
-# Tab Completion #
-##################
-
-zmodload zsh/complist
-autoload -Uz compinit
-compinit
-
-zstyle ":completion:*" menu select
-bindkey -M menuselect "h" vi-backward-char
-bindkey -M menuselect "k" vi-up-line-or-history
-bindkey -M menuselect "l" vi-forward-char
-bindkey -M menuselect "j" vi-down-line-or-history
-
-#############
-# Functions #
-#############
-
-# "git graph" opens tig (falls back to git log if tig is missing)
-git() {
-    if [[ $1 == graph ]]; then
-        if (( $+commands[tig] )); then
-            tig --all
-        else
-            command git log --graph --oneline --decorate --all
-        fi
-    else
-        command git "$@"
-    fi
-}
-
-# cheat python reverse list -> cht.sh/python/reverse+list
-# Fetch with curl, falling back to wget; page with less, falling back to more
-cheat() {
-    local -a fetch pager
-    if (( $+commands[curl] )); then
-        fetch=(curl -s)
-    elif (( $+commands[wget] )); then
-        fetch=(wget -qO-)
-    else
-        echo "cheat: curl or wget is required" >&2
-        return 1
-    fi
-    if (( $+commands[less] )); then
-        pager=(less -R)
-    else
-        pager=(more)
-    fi
-
-    local topic=$1; (( $# )) && shift
-    $fetch "https://cht.sh/$topic${*:+/${(j:+:)@}}" | $pager
-}
 
 ################
 # Cursor Shape #
@@ -133,109 +86,88 @@ cheat() {
 
 # Beam in insert mode, block in normal mode
 autoload -Uz add-zle-hook-widget
-_cursor_shape() {
+_rc_cursor_shape() {
     if [[ $KEYMAP == vicmd ]]; then
-        echo -ne "\e[1 q"
+        echo -ne '\e[1 q'
     else
-        echo -ne "\e[5 q"
+        echo -ne '\e[5 q'
     fi
 }
-add-zle-hook-widget line-init _cursor_shape
-add-zle-hook-widget keymap-select _cursor_shape
+add-zle-hook-widget line-init     _rc_cursor_shape
+add-zle-hook-widget keymap-select _rc_cursor_shape
 
-##########
-# Prompt #
-##########
+##############
+# Completion #
+##############
 
-# Extra lines only appear when relevant:
-#   Duration: 3s          <- commands longer than 2s
-#   Exit Code: 130        <- failed commands
-# user@host ~/dir (main?+-!) $
+zmodload zsh/complist
+autoload -Uz compinit
+compinit
 
-setopt prompt_subst
-zmodload zsh/datetime
-autoload -Uz add-zsh-hook
+# Menu selection, navigated with h/j/k/l
+zstyle ':completion:*' menu select
+bindkey -M menuselect h vi-backward-char
+bindkey -M menuselect j vi-down-line-or-history
+bindkey -M menuselect k vi-up-line-or-history
+bindkey -M menuselect l vi-forward-char
 
-# Git: (branch, untracked ?, modified +, deleted -, staged !)
-_prompt_git_info() {
-    _prompt_git=
-    (( $+commands[git] )) || return
-    local out
-    out=$(command git --no-optional-locks status --porcelain --branch 2>/dev/null) || return
+###########
+# Aliases #
+###########
 
-    local -a lines=("${(@f)out}")
-    local branch=${lines[1]#\#\# }
-    branch=${branch#No commits yet on }
-    branch=${branch%%...*}
-    branch=${branch% (no branch)}
+alias ls="ls --color=auto --human-readable"
+alias sl="ls --color=auto --human-readable"
+alias la="ls --color=auto --human-readable -la"
+alias ..="cd .."
+alias less="less -R"
 
-    local line x y new= modified= deleted= staged=
-    for line in "${(@)lines[2,-1]}"; do
-        x=${line[1]} y=${line[2]}
-        [[ $x$y == '??' ]] && { new='?'; continue }
-        [[ $y == [MT] ]] && modified='+'
-        [[ $x == D || $y == D ]] && deleted='-'
-        [[ $x == [MTADRC] ]] && staged='!'
-    done
+#############
+# Functions #
+#############
 
-    _prompt_git="%F{yellow}(${branch//\%/%%}$new$modified$deleted$staged)%f "
+# "git graph" opens tig (falls back to git log if tig is missing)
+git() {
+    if [[ $1 != graph ]]; then
+        command git "$@"
+    elif _rc_have tig; then
+        tig --all
+    else
+        command git log --graph --oneline --decorate --all
+    fi
 }
 
-_prompt_preexec() {
-    _prompt_start=$EPOCHREALTIME
-}
-
-_prompt_precmd() {
-    local exit=$?
-
-    # Duration line (only for commands longer than 2s)
-    if [[ -n $_prompt_start ]]; then
-        local -i ms=$(( (EPOCHREALTIME - _prompt_start) * 1000 ))
-        unset _prompt_start
-        if (( ms >= 2000 )); then
-            local -i s=$(( ms / 1000 ))
-            local -i d=$(( s / 86400 )) h=$(( s % 86400 / 3600 )) m=$(( s % 3600 / 60 ))
-            local dur=
-            (( d )) && dur+="${d}d"
-            (( d || h )) && dur+="${h}h"
-            (( d || h || m )) && dur+="${m}m"
-            dur+="$(( s % 60 ))s"
-            print -P "%F{yellow}  Duration: $dur%f"
-        fi
+# cheat python reverse list -> cht.sh/python/reverse+list
+# Fetches with curl or wget, pages with less or more
+cheat() {
+    local -a fetch pager
+    if _rc_have curl; then
+        fetch=(curl -s)
+    elif _rc_have wget; then
+        fetch=(wget -qO-)
+    else
+        echo "cheat: curl or wget is required" >&2
+        return 1
+    fi
+    if _rc_have less; then
+        pager=(less -R)
+    else
+        pager=(more)
     fi
 
-    # Exit code line (only on failure)
-    (( exit )) && print -P "%F{red}  Exit Code: $exit%f"
-
-    # Lock icon for read-only directories
-    [[ -w $PWD ]] && _prompt_ro= || _prompt_ro='%F{red} 🔒%f'
-
-    _prompt_git_info
+    local topic=$1
+    (( $# )) && shift
+    local query=${(j:+:)@}
+    "${fetch[@]}" "https://cht.sh/$topic${query:+/$query}" | "${pager[@]}"
 }
-
-add-zsh-hook preexec _prompt_preexec
-add-zsh-hook precmd _prompt_precmd
-
-# user@host (hostname underlined over SSH)
-PS1='%F{green}%n%f%F{blue}@%f'
-if [[ -n $SSH_CONNECTION ]]; then
-    PS1+='%F{green}%U%M%u%f '
-else
-    PS1+='%F{green}%M%f '
-fi
-
-# ~/dir (git) $
-PS1+='%F{blue}%2~%f${_prompt_ro} ${_prompt_git}%F{green}$%f '
-RPS1=
 
 ###################
 # SSH Agent (GPG) #
 ###################
 
-if (( $+commands[gpgconf] )); then
+if _rc_have gpgconf; then
     unset SSH_AGENT_PID
-    if [ "${gnupg_SSH_AUTH_SOCK_by:-0}" -ne $$ ]; then
-        export SSH_AUTH_SOCK="$(gpgconf --list-dirs agent-ssh-socket)"
+    if (( ${gnupg_SSH_AUTH_SOCK_by:-0} != $$ )); then
+        export SSH_AUTH_SOCK=$(gpgconf --list-dirs agent-ssh-socket)
     fi
     export GPG_TTY=$TTY
     gpg-connect-agent updatestartuptty /bye >/dev/null 2>&1
@@ -244,88 +176,85 @@ fi
 ###########
 # Plugins #
 ###########
-# Kept last: zsh-syntax-highlighting must be sourced after all widgets,
-# and history-substring-search after zsh-syntax-highlighting.
-# Paths: Arch first, Debian second. Missing plugins are skipped.
+# Each plugin is optional and skipped when not installed.
+# Paths: Arch first, Debian second.
+# Order matters: syntax highlighting after all other widgets,
+# history substring search after syntax highlighting.
 
-# fzf (fzf >= 0.48 provides its own init, older versions ship scripts)
-if (( $+commands[fzf] )); then
-    if FZF_INIT=$(fzf --zsh 2>/dev/null); then
-        eval "$FZF_INIT"
-    else
-        for PATH_FZF in "/usr/share/fzf" "/usr/share/doc/fzf/examples"
-        do
-            if [[ -f $PATH_FZF/key-bindings.zsh ]]; then
-                source $PATH_FZF/key-bindings.zsh
-                [[ -f $PATH_FZF/completion.zsh ]] && source $PATH_FZF/completion.zsh
-                break
-            fi
-        done
+# fzf: fuzzy Ctrl+R (history), Ctrl+T (files), Alt+C (directories)
+if _rc_have fzf; then
+    if fzf_init=$(fzf --zsh 2>/dev/null); then    # fzf 0.48 and newer
+        eval "$fzf_init"
+    elif _rc_find_file \
+        /usr/share/fzf/key-bindings.zsh \
+        /usr/share/doc/fzf/examples/key-bindings.zsh
+    then
+        source "$REPLY"
+        [[ -f ${REPLY:h}/completion.zsh ]] && source "${REPLY:h}/completion.zsh"
     fi
-    unset FZF_INIT
+    unset fzf_init
 fi
 
-# Without fzf: Ctrl+R falls back to zsh's built-in incremental history search
-if (( ! $+widgets[fzf-history-widget] )); then
-    bindkey -M viins '^R' history-incremental-pattern-search-backward
-    bindkey -M vicmd '^R' history-incremental-pattern-search-backward
+# Suggest installing the package that provides an unknown command
+if _rc_find_file \
+    /usr/share/doc/pkgfile/command-not-found.zsh \
+    /etc/zsh_command_not_found
+then
+    source "$REPLY"
 fi
 
-# Command not found hook (Arch: pkgfile, Debian: command-not-found)
-if [[ -f /usr/share/doc/pkgfile/command-not-found.zsh ]]; then
-    source /usr/share/doc/pkgfile/command-not-found.zsh
-elif [[ -f /etc/zsh_command_not_found ]]; then
-    source /etc/zsh_command_not_found
+# Autosuggestions from history; Ctrl+Space accepts and runs one
+if _rc_find_file \
+    /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh \
+    /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+then
+    source "$REPLY"
+    ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#666666'
+    for keymap in viins vicmd; do
+        bindkey -M $keymap '^@' autosuggest-execute
+    done
+    unset keymap
 fi
-
-# Autosuggestions
-for PATH_AUTOSUGGEST in "/usr/share/zsh/plugins/zsh-autosuggestions" "/usr/share/zsh-autosuggestions"
-do
-    if [[ -f $PATH_AUTOSUGGEST/zsh-autosuggestions.zsh ]]; then
-        source $PATH_AUTOSUGGEST/zsh-autosuggestions.zsh
-
-        bindkey -M vicmd -- "${key[Ctrl-Space]}" autosuggest-execute
-        bindkey -M viins -- "${key[Ctrl-Space]}" autosuggest-execute
-
-        ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#666666"
-
-        break
-    fi
-done
 
 # Syntax highlighting
-for PATH_SYNTAX in "/usr/share/zsh/plugins/zsh-syntax-highlighting" "/usr/share/zsh-syntax-highlighting"
-do
-    if [[ -f $PATH_SYNTAX/zsh-syntax-highlighting.zsh ]]; then
-        source $PATH_SYNTAX/zsh-syntax-highlighting.zsh
-        break
-    fi
-done
+if _rc_find_file \
+    /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh \
+    /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+then
+    source "$REPLY"
+fi
 
-# Substring history search (fallback: built-in prefix search)
-for PATH_SUBSTRING in "/usr/share/zsh/plugins/zsh-history-substring-search" "/usr/share/zsh-history-substring-search"
-do
-    if [[ -f $PATH_SUBSTRING/zsh-history-substring-search.zsh ]]; then
-        source $PATH_SUBSTRING/zsh-history-substring-search.zsh
-        break
-    fi
-done
-
-if (( $+widgets[history-substring-search-up] )); then
-    bindkey -M vicmd "k" history-substring-search-up
-    bindkey -M vicmd "j" history-substring-search-down
-
-    bindkey -M viins -- "${key[Ctrl-k]}" history-substring-search-up
-    bindkey -M vicmd -- "${key[Ctrl-k]}" history-substring-search-up
-    bindkey -M viins -- "${key[Ctrl-j]}" history-substring-search-down
-    bindkey -M vicmd -- "${key[Ctrl-j]}" history-substring-search-down
-
+# History substring search: Ctrl+K/J (and k/j in normal mode) match
+# anywhere in the line instead of only at the start
+if _rc_find_file \
+    /usr/share/zsh/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh \
+    /usr/share/zsh-history-substring-search/zsh-history-substring-search.zsh
+then
+    source "$REPLY"
     HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND=none
     HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_NOT_FOUND=none
+    for keymap in viins vicmd; do
+        bindkey -M $keymap '^K' history-substring-search-up
+        bindkey -M $keymap '^J' history-substring-search-down
+    done
+    unset keymap
+    bindkey -M vicmd k history-substring-search-up
+    bindkey -M vicmd j history-substring-search-down
+fi
+
+##########
+# Prompt #
+##########
+
+# Starship (config: ~/.config/starship.toml)
+if _rc_have starship; then
+    eval "$(starship init zsh)"
+
+# Fallback with the same layout and colors, without git, duration,
+# exit code and read-only marker: user@host [ssh] dir $
 else
-    bindkey -M viins -- "${key[Ctrl-k]}" history-beginning-search-backward
-    bindkey -M vicmd -- "${key[Ctrl-k]}" history-beginning-search-backward
-    bindkey -M viins -- "${key[Ctrl-j]}" history-beginning-search-forward
-    bindkey -M vicmd -- "${key[Ctrl-j]}" history-beginning-search-forward
+    PS1='%(!.%F{red}.%F{green})%n%F{blue}@%F{green}%m'   # red user for root
+    [[ -n $SSH_CONNECTION ]] && PS1+='%F{blue} [ssh]'
+    PS1+=' %F{blue}%2~ %F{green}$%f '
 fi
 

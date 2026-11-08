@@ -1,0 +1,57 @@
+# user@host ~/dir (branch?+-!) $
+# Duration and exit code appear on their own line above, only when relevant
+format = "$cmd_duration$status$username$hostname$directory$git_branch$git_status$character"
+add_newline = false
+
+[username]
+show_always = true
+format = "[$user]($style)[@](blue)"
+style_user = "green"
+style_root = "red"
+
+[hostname]
+ssh_only = false
+ssh_symbol = " \\[ssh\\]"
+format = "[$hostname]($style)[$ssh_symbol](blue) "
+style = "green"
+
+[directory]
+truncation_length = 2
+truncate_to_repo = false
+read_only = " [ro]"
+read_only_style = "red"
+format = "[$path]($style)[$read_only]($read_only_style) "
+style = "blue"
+
+[git_branch]
+format = "[\\($branch]($style)"
+style = "yellow"
+
+[git_status]
+format = "[$untracked$modified$deleted$renamed$staged$conflicted$stashed$ahead_behind\\)]($style) "
+style = "yellow"
+untracked = "?"
+modified = "+"
+deleted = "-"
+renamed = "="
+staged = "!"
+conflicted = "~"
+stashed = "_"
+ahead = ""
+behind = ""
+diverged = ""
+up_to_date = ""
+
+[cmd_duration]
+format = "[  Duration: $duration]($style)\n"
+style = "yellow"
+
+[status]
+disabled = false
+format = "[  Exit Code: $status]($style)\n"
+style = "red"
+
+[character]
+success_symbol = "[\\$](green)"
+error_symbol = "[\\$](green)"
+vimcmd_symbol = "[\\$](green)"
