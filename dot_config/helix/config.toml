@@ -39,3 +39,6 @@ space.T = ":set whitespace.render none"
 space.i = ":set inline-diagnostics.cursor-line warning"
 space.I = ":set inline-diagnostics.cursor-line disable"
 C-l = ":reload-all"
+
+[keys.insert]
+"C-[" = "normal_mode"
